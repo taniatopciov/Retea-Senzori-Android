@@ -9,4 +9,12 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="paired_devices">Paired Devices</string>
+    <string name="scan">Scan</string>
+    <string name="connect">Connect</string>
+    <string name="connected_device">Connected Device</string>
+    <string name="sensor_types">Sensor Types</string>
+    <string name="get_data">Get Data</string>
 </resources>

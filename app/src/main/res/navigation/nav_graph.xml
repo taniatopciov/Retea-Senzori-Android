@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
+        <action
+            android:id="@+id/action_FirstFragment_to_bluetoothManagerFragment"
+            app:destination="@id/bluetoothManagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
@@ -25,4 +28,9 @@
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/bluetoothManagerFragment"
+        android:name="com.example.retea_senzori_android.bluetooth.ui.BluetoothManagerFragment"
+        android:label="fragment_bluetooth_manager"
+        tools:layout="@layout/fragment_bluetooth_manager" />
 </navigation>
