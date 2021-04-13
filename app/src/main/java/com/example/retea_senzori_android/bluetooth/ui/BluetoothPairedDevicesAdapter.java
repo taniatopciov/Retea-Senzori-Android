@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.example.retea_senzori_android.R;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,9 +18,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class BluetoothPairedDevicesAdapter extends RecyclerView.Adapter<BluetoothPairedDevicesAdapter.ViewHolder> {
 
     private final List<BluetoothDevice> bluetoothDevices;
-    BluetoothDeviceConnectEvent onItemClick;
+    private Consumer<BluetoothDevice> onItemClick;
 
-    public BluetoothPairedDevicesAdapter(List<BluetoothDevice> bluetoothDevices, BluetoothDeviceConnectEvent onItemClick) {
+    public BluetoothPairedDevicesAdapter(List<BluetoothDevice> bluetoothDevices, Consumer<BluetoothDevice> onItemClick) {
         this.onItemClick = onItemClick;
         this.bluetoothDevices = bluetoothDevices;
     }
@@ -34,7 +35,7 @@ public class BluetoothPairedDevicesAdapter extends RecyclerView.Adapter<Bluetoot
     @Override
     public void onBindViewHolder(@NonNull BluetoothPairedDevicesAdapter.ViewHolder holder, int position) {
         holder.deviceNameTextView.setText(bluetoothDevices.get(position).getName());
-        holder.deviceConnectButton.setOnClickListener(view -> onItemClick.connect(bluetoothDevices.get(position)));
+        holder.deviceConnectButton.setOnClickListener(view -> onItemClick.accept(bluetoothDevices.get(position)));
     }
 
     @Override

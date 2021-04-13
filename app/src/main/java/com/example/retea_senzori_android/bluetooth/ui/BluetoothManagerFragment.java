@@ -13,9 +13,11 @@ import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtoco
 import com.example.retea_senzori_android.databinding.FragmentBluetoothManagerBinding;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.function.Consumer;
+
 import androidx.fragment.app.Fragment;
 
-public class BluetoothManagerFragment extends Fragment implements BluetoothDeviceConnectEvent {
+public class BluetoothManagerFragment extends Fragment implements Consumer<BluetoothDevice> {
 
     public static final int PAIRED_BT_DEVICES_REQUEST_CODE = 300;
 
@@ -63,8 +65,7 @@ public class BluetoothManagerFragment extends Fragment implements BluetoothDevic
             pairedBluetoothDevicesDialogFragment.show(getParentFragmentManager(), "paired_bt_devices_fragment");
         });
 
-        bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> Snackbar.make(container, "Connected to " + deviceName, Snackbar.LENGTH_LONG).show(),
-                s -> getActivity().runOnUiThread(() -> binding.receivedDataTextView.append(s)));
+        bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> Snackbar.make(container, "Connected to " + deviceName, Snackbar.LENGTH_LONG).show());
 
         if (bluetoothAdapter == null) {
             Snackbar.make(container, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
@@ -76,12 +77,13 @@ public class BluetoothManagerFragment extends Fragment implements BluetoothDevic
 
 
                 binding.requestSensorTypesButton.setOnClickListener(view -> {
-                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.CONNECT_STRING);
-                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.REQUEST_SENSOR_TYPES_STRING);
+//                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.CONNECT_STRING);
+//                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.REQUEST_SENSOR_COUNT_STRING);
+//                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.REQUEST_SENSOR_TYPES_STRING);
                 });
 
                 binding.requestDataButton.setOnClickListener(view -> {
-                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.REQUEST_DATA_STRING);
+//                    bluetoothNodeProtocol.sendCommand(BluetoothNodeProtocolSPPImpl.REPLAY_DATA_FROM_CURRENT_LOG_STRING);
                 });
 
 //                IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -113,10 +115,10 @@ public class BluetoothManagerFragment extends Fragment implements BluetoothDevic
     }
 
     @Override
-    public void connect(BluetoothDevice device) {
+    public void accept(BluetoothDevice device) {
         System.out.println(device.getName());
         binding.connectedDeviceNameTextView.setText(device.getName());
 
-        bluetoothNodeProtocol.connect(device);
+        bluetoothNodeProtocol.connect(device, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
     }
 }

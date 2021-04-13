@@ -13,6 +13,7 @@ import com.example.retea_senzori_android.R;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,9 +46,9 @@ public class PairedBluetoothDevicesDialogFragment extends DialogFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.paired_devices_list, null);
 
         bluetoothPairedDevicesAdapter = new BluetoothPairedDevicesAdapter(new ArrayList<>(pairedDevices), device -> {
-            BluetoothDeviceConnectEvent bluetoothDeviceConnectEvent = (BluetoothDeviceConnectEvent) getTargetFragment();
+            Consumer<BluetoothDevice> bluetoothDeviceConnectEvent = (Consumer<BluetoothDevice>) getTargetFragment();
             if (bluetoothDeviceConnectEvent != null) {
-                bluetoothDeviceConnectEvent.connect(device);
+                bluetoothDeviceConnectEvent.accept(device);
             }
             dismiss();
         });
