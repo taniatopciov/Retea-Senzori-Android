@@ -17,4 +17,10 @@
     <string name="connected_device">Connected Device</string>
     <string name="sensor_types">Sensor Types</string>
     <string name="get_data">Get Data</string>
+
+    <string name="name_placeholder">name@example.com</string>
+    <string name="password_placeholder">**************</string>
+    <string name="new_here">New here?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="login">Login</string>
 </resources>

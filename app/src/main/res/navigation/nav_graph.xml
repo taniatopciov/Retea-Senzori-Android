@@ -33,4 +33,9 @@
         android:name="com.example.retea_senzori_android.bluetooth.ui.BluetoothManagerFragment"
         android:label="fragment_bluetooth_manager"
         tools:layout="@layout/fragment_bluetooth_manager" />
+
+    <fragment
+        android:id="@+id/nav_login_fragment"
+        android:name="com.example.retea_senzori_android.ui.login.LoginFragment"
+        android:label="Login Fragment" />
 </navigation>

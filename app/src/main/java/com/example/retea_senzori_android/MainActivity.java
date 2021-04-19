@@ -7,6 +7,8 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import android.view.View;
 
@@ -14,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +26,11 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        fab.setOnClickListener(view -> {
+            navController.navigate(R.id.nav_login_fragment);
         });
     }
 
