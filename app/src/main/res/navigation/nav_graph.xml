@@ -37,5 +37,17 @@
     <fragment
         android:id="@+id/nav_login_fragment"
         android:name="com.example.retea_senzori_android.ui.login.LoginFragment"
-        android:label="Login Fragment" />
+        android:label="Login Fragment" >
+        <action
+            android:id="@+id/navigateToRegister"
+            app:destination="@id/nav_register_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_register_fragment"
+        android:name="com.example.retea_senzori_android.ui.register.RegisterFragment"
+        android:label="Register Fragment" >
+        <action
+            android:id="@+id/navigateToLogin"
+            app:destination="@id/nav_login_fragment" />
+    </fragment>
 </navigation>
