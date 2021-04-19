@@ -18,9 +18,15 @@
     <string name="sensor_types">Sensor Types</string>
     <string name="get_data">Get Data</string>
 
-    <string name="name_placeholder">name@example.com</string>
+    <string name="email_placeholder">name@example.com</string>
     <string name="password_placeholder">**************</string>
     <string name="new_here">New here?</string>
     <string name="sign_up">Sign up</string>
     <string name="login">Login</string>
+
+    <string name="name_placeholder">Username</string>
+    <string name="old_here">Already have an account?</string>
+    <string name="pass_placeholder">Password</string>
+    <string name="confirm_placeholder">Confirm password</string>
+
 </resources>
