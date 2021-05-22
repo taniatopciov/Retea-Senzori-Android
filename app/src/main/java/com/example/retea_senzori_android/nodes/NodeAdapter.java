@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.retea_senzori_android.R;
+import com.example.retea_senzori_android.models.NodeModel;
 
 import java.util.ArrayList;
 
@@ -34,9 +35,9 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
     @Override
     public void onBindViewHolder(@NonNull NodeAdapter.Viewholder holder, int position) {
         NodeModel model = nodeModelArrayList.get(position);
-        holder.nodeName.setText(model.node_name);
-        //holder.sensor1.setText(model.sensor1_name);
-        //holder.sensor2.setText(model.sensor2_name);
+        holder.nodeName.setText(model.nodeName);
+        holder.sensor1.setText(model.sensors.get(0).sensorType);
+        holder.sensor2.setText(model.sensors.get(1).sensorType);
     }
 
     @Override

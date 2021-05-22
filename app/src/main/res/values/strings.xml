@@ -40,5 +40,8 @@
     <string name="add_node">add node</string>
     <string name="logo">logo</string>
 
+    <string name="sensor_data_text">Live Sensor Data</string>
+    <string name="sensor_data_value">Unavailable</string>
+
 
 </resources>
