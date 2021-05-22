@@ -1,19 +1,20 @@
 package com.example.retea_senzori_android;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.example.retea_senzori_android.di.ServiceLocator;
+import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
+import com.example.retea_senzori_android.services.TestClass;
+import com.example.retea_senzori_android.services.TestService;
+import com.example.retea_senzori_android.services.impl.TestServiceImpl;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
-import android.view.View;
-
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
@@ -25,9 +26,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        registerServices();
+
         FloatingActionButton fab = findViewById(R.id.fab);
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        TestService testService = new TestServiceImpl(new FirebaseRepositoryImpl<>());
+
+        testService.createTestClass("QWERT").subscribe(id ->{
+            System.out.println(id);
+        });
 
         fab.setOnClickListener(view -> {
             navController.navigate(R.id.nav_login_fragment);
@@ -54,5 +63,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void registerServices() {
+        ServiceLocator serviceLocator = ServiceLocator.getInstance();
+
+        serviceLocator.register(TestService.class, new TestServiceImpl(new FirebaseRepositoryImpl<>()));
     }
 }
