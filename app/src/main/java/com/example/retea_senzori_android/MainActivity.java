@@ -20,7 +20,6 @@ import com.example.retea_senzori_android.services.NodeService;
 import com.example.retea_senzori_android.services.TestService;
 import com.example.retea_senzori_android.services.impl.NodeServiceImpl;
 import com.example.retea_senzori_android.services.impl.TestServiceImpl;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
         registerServices();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        fab.setOnClickListener(view -> {
-            navController.navigate(R.id.nav_login_fragment);
+        authenticationService.getLoggedUserData().subscribe(userData -> {
+            if (userData == null) {
+                navController.navigate(R.id.nav_login_fragment);
+            }
         });
     }
 
@@ -61,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings_logout) {
+            authenticationService.logout();
             return true;
         }
 
