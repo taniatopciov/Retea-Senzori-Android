@@ -9,11 +9,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.retea_senzori_android.R;
-import com.example.retea_senzori_android.databinding.LoginFragmentBinding;
 import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
+import com.example.retea_senzori_android.models.NodeModel;
+import com.example.retea_senzori_android.models.Sensor;
 
 import java.util.ArrayList;
 
@@ -27,10 +26,7 @@ public class NodesView extends Fragment {
 
         binding = NodesLayoutFragmentBinding.inflate(inflater, container, false);
         nodeArray = new ArrayList<>();
-        //nodeArray.add(new NodeModel("Node1", "Gas", "Rain"));
-        //nodeArray.add(new NodeModel("Funny Node", "Humidity", "Rain"));
-        //nodeArray.add(new NodeModel("My Node", "Rain", "Temperature"));
-        //nodeArray.add(new NodeModel("Stolen Node", "Gas", "Rain"));
+        nodeArray.add(new NodeModel("Node1", new Sensor("gaz"), new Sensor("rain")));
         binding.idRVNode.setAdapter(new NodeAdapter(getContext(), nodeArray));
         binding.idRVNode.setLayoutManager(new LinearLayoutManager(getContext()));
 
