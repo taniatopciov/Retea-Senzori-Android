@@ -41,6 +41,9 @@
         <action
             android:id="@+id/navigateToRegister"
             app:destination="@id/nav_register_fragment" />
+        <action
+            android:id="@+id/navigateToHomePage"
+            app:destination="@id/FirstFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_register_fragment"
@@ -49,5 +52,8 @@
         <action
             android:id="@+id/navigateToLogin"
             app:destination="@id/nav_login_fragment" />
+        <action
+            android:id="@+id/navigateToHomePage"
+            app:destination="@id/FirstFragment" />
     </fragment>
 </navigation>
