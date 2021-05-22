@@ -5,11 +5,11 @@ public class SensorModel {
     public String sensorType;
     public String logFileId;
 
-    public Sensor(){
+    public SensorModel() {
 
     }
 
-    public Sensor(String type){
+    public SensorModel(String type) {
         this.sensorType = type;
     }
 }

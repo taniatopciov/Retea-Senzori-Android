@@ -10,14 +10,12 @@ public class NodeModel {
     public String lastUpdate;
     public List<SensorModel> sensors;
 
-    public NodeModel(){
+    public NodeModel() {
 
     }
 
-    public NodeModel(String nodeName, SensorModel s1, SensorModel s2){
+    public NodeModel(String nodeName, ArrayList<SensorModel> sensors) {
         this.nodeName = nodeName;
-        sensors = new ArrayList<>();
-        sensors.add(s1);
-        sensors.add(s2);
+        this.sensors = sensors;
     }
 }

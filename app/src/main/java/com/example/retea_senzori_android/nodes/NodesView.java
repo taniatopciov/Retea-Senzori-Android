@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import com.example.retea_senzori_android.bluetooth.ui.PairedBluetoothDevicesDialogFragment;
 import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
+import com.example.retea_senzori_android.models.NodeModel;
+import com.example.retea_senzori_android.models.SensorModel;
 
 import java.util.ArrayList;
 
@@ -42,6 +44,7 @@ public class NodesView extends Fragment {
         nodeArray = new ArrayList<>();
         ArrayList<SensorModel> sensors = new ArrayList<>();
         sensors.add(new SensorModel("Gas"));
+        sensors.add(new SensorModel("Humidity"));
         nodeArray.add(new NodeModel("Stolen Node", sensors));
         binding.idRVNode.setAdapter(new NodeAdapter(getContext(), nodeArray));
         binding.idRVNode.setLayoutManager(new LinearLayoutManager(getContext()));

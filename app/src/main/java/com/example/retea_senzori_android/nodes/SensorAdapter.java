@@ -6,21 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.retea_senzori_android.R;
-import com.example.retea_senzori_android.models.NodeModel;
-import com.example.retea_senzori_android.models.Sensor;
+import com.example.retea_senzori_android.models.SensorModel;
 
 import java.util.ArrayList;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder> {
 
     private Context context;
-    private ArrayList<Sensor> sensorArrayList;
+    private ArrayList<SensorModel> sensorArrayList;
 
-    public SensorAdapter(Context context, ArrayList<Sensor> sensorArrayList) {
+    public SensorAdapter(Context context, ArrayList<SensorModel> sensorArrayList) {
         this.context = context;
         this.sensorArrayList = sensorArrayList;
     }
@@ -35,7 +34,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
     @Override
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
-        Sensor model = sensorArrayList.get(position);
+        SensorModel model = sensorArrayList.get(position);
         holder.sensorName.setText(model.sensorType);
     }
 
