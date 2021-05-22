@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.function.Consumer;
+
 
 public class FirebaseAuthenticationService implements AuthenticationService {
     private static final String USER_DATA_COLLECTION_PATH = "users";
@@ -29,7 +31,35 @@ public class FirebaseAuthenticationService implements AuthenticationService {
 
     @Override
     public void logout() {
+        loggedUserData = null;
+        firebaseAuth.signOut();
+    }
 
+    @Override
+    public boolean isLoggedIn() {
+        return firebaseAuth.getCurrentUser() != null;
+    }
+
+    @Override
+    public void getLoggedUserData(Consumer<LoggedUserData> userDataConsumer) {
+//        if (isLoggedIn() && loggedUserData == null) {
+//            FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+//            String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
+//
+//            firestore.document(path).get().addOnSuccessListener(documentSnapshot -> {
+//
+//            })
+//            profileModelDTOFirebaseRepository.getDocument(path, ProfileModelDTO.class, profileModelDTO -> {
+//                if(profileModelDTO == null) {
+//                    userDataConsumer.accept(new LoggedUserData());
+//                    return;
+//                }
+//                setLoggedUserData(profileModelDTO);
+//                userDataConsumer.accept(loggedUserData);
+//            });
+//        } else {
+//            userDataConsumer.accept(loggedUserData);
+//        }
     }
 
     @Override
