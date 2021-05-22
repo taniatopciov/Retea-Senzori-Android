@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/nodesView">
+    app:startDestination="@id/sensorsView">
 
     <fragment
         android:id="@+id/FirstFragment"
@@ -60,4 +60,8 @@
         android:id="@+id/nodesView"
         android:name="com.example.retea_senzori_android.nodes.NodesView"
         android:label="NodesView" />
+    <fragment
+        android:id="@+id/sensorsView"
+        android:name="com.example.retea_senzori_android.nodes.SensorsView"
+        android:label="SensorsView" />
 </navigation>
