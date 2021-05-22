@@ -4,20 +4,28 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.retea_senzori_android.authentication.service.AuthenticationService;
-import com.example.retea_senzori_android.authentication.service.FirebaseAuthenticationService;
-import com.example.retea_senzori_android.di.ServiceLocator;
-import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
-import com.example.retea_senzori_android.services.TestService;
-import com.example.retea_senzori_android.services.impl.TestServiceImpl;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.retea_senzori_android.authentication.service.AuthenticationService;
+import com.example.retea_senzori_android.authentication.service.FirebaseAuthenticationService;
+import com.example.retea_senzori_android.di.ServiceLocator;
+import com.example.retea_senzori_android.models.ProfileModel;
+import com.example.retea_senzori_android.observables.Observer;
+import com.example.retea_senzori_android.persistance.FirebaseRepository;
+import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
+import com.example.retea_senzori_android.services.NodeService;
+import com.example.retea_senzori_android.services.TestService;
+import com.example.retea_senzori_android.services.impl.NodeServiceImpl;
+import com.example.retea_senzori_android.services.impl.TestServiceImpl;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class MainActivity extends AppCompatActivity {
+
+    private AuthenticationService authenticationService;
+
     private NavController navController;
 
     @Override
@@ -62,10 +70,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void registerServices() {
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
+        FirebaseRepository<ProfileModel> profileModelFirebaseRepository = new FirebaseRepositoryImpl<>();
 
-        AuthenticationService authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>());
+        authenticationService = new FirebaseAuthenticationService(profileModelFirebaseRepository);
 
         serviceLocator.register(TestService.class, new TestServiceImpl(new FirebaseRepositoryImpl<>()));
         serviceLocator.register(AuthenticationService.class, authenticationService);
+
+        NodeServiceImpl nodeService = new NodeServiceImpl(profileModelFirebaseRepository);
+        serviceLocator.register(NodeService.class, nodeService);
+
+        authenticationService.getLoggedUserData().subscribe(nodeService);
     }
 }
