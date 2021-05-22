@@ -29,4 +29,14 @@
     <string name="pass_placeholder">Password</string>
     <string name="confirm_placeholder">Confirm password</string>
 
+    <string name="node_details">Details</string>
+    <string name="sensor1_name">Gaz</string>
+    <string name="sensor2_name">Temperatura</string>
+    <string name="node_name">Node1</string>
+
+    <string name="live_data">Live Data</string>
+    <string name="log_data">Log Data</string>
+    <string name="all_data">All Data</string>
+
+
 </resources>
