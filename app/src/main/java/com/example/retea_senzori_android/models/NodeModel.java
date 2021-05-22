@@ -1,9 +1,10 @@
 package com.example.retea_senzori_android.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeModel {
+public class NodeModel implements Serializable {
 
     public String nodeName;
     public String connectedBluetoothDevice;

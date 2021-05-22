@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.databinding.NodeDetailsFragmentBinding;
 import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
+import com.example.retea_senzori_android.models.NodeModel;
 
 public class NodeDetailsFragment extends Fragment {
 
@@ -31,6 +32,9 @@ public class NodeDetailsFragment extends Fragment {
         binding = NodeDetailsFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(NodeDetailsViewModel.class);
         mViewModel.node_name.observe(getViewLifecycleOwner(), name -> binding.testId.setText(name));
+
+        NodeModel nodeModel = NodeDetailsFragmentArgs.fromBundle(getArguments()).getNodeModel();
+        mViewModel.node_name.setValue(nodeModel.nodeName);
 
         return binding.getRoot();
     }

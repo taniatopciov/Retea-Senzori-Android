@@ -59,9 +59,25 @@
     <fragment
         android:id="@+id/nodesView"
         android:name="com.example.retea_senzori_android.nodes.NodesView"
-        android:label="NodesView" />
+        android:label="NodesView" >
+        <action
+            android:id="@+id/action_nodesView_to_nodeDetailsFragment"
+            app:destination="@id/nodeDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/sensorsView"
         android:name="com.example.retea_senzori_android.nodes.SensorsView"
         android:label="SensorsView" />
+    <fragment
+        android:id="@+id/nodeDetailsFragment"
+        android:name="com.example.retea_senzori_android.nodes.NodeDetailsFragment"
+        android:label="node_details_fragment"
+        tools:layout="@layout/node_details_fragment" >
+        <action
+            android:id="@+id/action_nodeDetailsFragment_to_sensorsView"
+            app:destination="@id/sensorsView" />
+        <argument
+            android:name="nodeModel"
+            app:argType="com.example.retea_senzori_android.models.NodeModel" />
+    </fragment>
 </navigation>
