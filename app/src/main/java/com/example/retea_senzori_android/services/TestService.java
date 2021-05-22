@@ -10,4 +10,8 @@ public interface TestService {
     Subject<List<TestClass>> getAllTestClasses();
 
     Subject<String> createTestClass(String value);
+
+    Subject<Boolean> deleteTestClass(String id);
+
+    Subject<Boolean> updateTestClass(String id, String value);
 }

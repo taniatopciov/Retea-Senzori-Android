@@ -6,7 +6,6 @@ import android.view.MenuItem;
 
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
-import com.example.retea_senzori_android.services.TestClass;
 import com.example.retea_senzori_android.services.TestService;
 import com.example.retea_senzori_android.services.impl.TestServiceImpl;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -31,12 +30,6 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-
-        TestService testService = new TestServiceImpl(new FirebaseRepositoryImpl<>());
-
-        testService.createTestClass("QWERT").subscribe(id ->{
-            System.out.println(id);
-        });
 
         fab.setOnClickListener(view -> {
             navController.navigate(R.id.nav_login_fragment);

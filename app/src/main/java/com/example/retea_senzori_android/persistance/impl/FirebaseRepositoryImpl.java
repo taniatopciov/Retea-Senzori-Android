@@ -9,6 +9,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FirebaseRepositoryImpl<T extends FirebaseDocument> implements FirebaseRepository<T> {
 
@@ -17,7 +18,6 @@ public class FirebaseRepositoryImpl<T extends FirebaseDocument> implements Fireb
     public FirebaseRepositoryImpl() {
         firestore = FirebaseFirestore.getInstance();
     }
-
 
     @Override
     public Subject<T> getDocument(String pathToDocument, Class<T> tClass) {
@@ -76,11 +76,22 @@ public class FirebaseRepositoryImpl<T extends FirebaseDocument> implements Fireb
 
     @Override
     public Subject<Boolean> deleteDocument(String pathToCollection, String documentId) {
-        return null;
+        Subject<Boolean> subject = new Subject<>();
+
+        firestore.collection(pathToCollection).document(documentId).delete()
+                .addOnSuccessListener(e -> subject.setState(true))
+                .addOnFailureListener(e -> subject.setState(false));
+        return subject;
     }
 
     @Override
-    public Subject<Boolean> updateDocument(String pathToDocument, T document) {
-        return null;
+    public Subject<Boolean> updateDocument(String pathToDocument, Map<String, Object> map) {
+        Subject<Boolean> subject = new Subject<>();
+
+        firestore.document(pathToDocument).update(map)
+                .addOnSuccessListener(e -> subject.setState(true))
+                .addOnFailureListener(e -> subject.setState(false));
+
+        return subject;
     }
 }

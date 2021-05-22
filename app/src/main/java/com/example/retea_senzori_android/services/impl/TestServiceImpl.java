@@ -5,7 +5,9 @@ import com.example.retea_senzori_android.persistance.FirebaseRepository;
 import com.example.retea_senzori_android.services.TestClass;
 import com.example.retea_senzori_android.services.TestService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TestServiceImpl implements TestService {
 
@@ -33,5 +35,17 @@ public class TestServiceImpl implements TestService {
         testClass.value = value;
 
         return testClassFirebaseRepository.createDocument(TEST_COLLECTION_PATH, testClass);
+    }
+
+    @Override
+    public Subject<Boolean> deleteTestClass(String id) {
+        return testClassFirebaseRepository.deleteDocument(TEST_COLLECTION_PATH, id);
+    }
+
+    @Override
+    public Subject<Boolean> updateTestClass(String id, String value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("value", value);
+        return testClassFirebaseRepository.updateDocument(TEST_COLLECTION_PATH + "/" + id, map);
     }
 }
