@@ -38,5 +38,8 @@
     <string name="log_data">Log Data</string>
     <string name="all_data">All Data</string>
 
+    <string name="sensor_data_text">Live Sensor Data</string>
+    <string name="sensor_data_value">Unavailable</string>
+
 
 </resources>

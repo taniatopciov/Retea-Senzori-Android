@@ -9,16 +9,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
         android:layout_height="120dp"
-        android:layout_constraintEnd_toEndOf="parent"
-        android:layout_constraintStart_toStartOf="parent"
-        android:layout_constraintTop_toTopOf="parent"
+
         android:layout_margin="8dp"
-        android:cardBackgroundColor="@color/light_green_300"
-        android:cardCornerRadius="8dp"
-        android:cardElevation="8dp"
-        android:cardMaxElevation="12dp"
-        android:cardPreventCornerOverlap="true"
-        android:cardUseCompatPadding="true"
         app:cardBackgroundColor="@color/amber_700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,16 +21,40 @@
             android:layout_height="120dp">
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/sensorName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="@string/sensor1_name"
                 android:textColor="@color/white"
-                android:textSize="24dp"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/sensorDataText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/sensor_data_text"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/sensorDataValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/sensor_data_value"
+                android:textColor="@color/light_green_800"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
