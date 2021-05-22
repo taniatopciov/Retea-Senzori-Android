@@ -1,48 +1,88 @@
 package com.example.retea_senzori_android.authentication.service;
 
-import androidx.lifecycle.Observer;
-
-import com.example.retea_senzori_android.profile.ProfileModel;
+import com.example.retea_senzori_android.models.ProfileModel;
+import com.example.retea_senzori_android.observables.Subject;
+import com.example.retea_senzori_android.persistance.FirebaseRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 
 public class FirebaseAuthenticationService implements AuthenticationService {
     private static final String USER_DATA_COLLECTION_PATH = "users";
 
     private final FirebaseAuth firebaseAuth;
-    private final FirebaseFirestore firestore;
 
-    private LoggedUserData loggedUserData;
+    private final FirebaseRepository<ProfileModel> profileModelFirebaseRepository;
 
-    public FirebaseAuthenticationService() {
+    private Subject<ProfileModel> profileModelSubject;
+
+    public FirebaseAuthenticationService(FirebaseRepository<ProfileModel> profileModelFirebaseRepository) {
+        this.profileModelFirebaseRepository = profileModelFirebaseRepository;
         firebaseAuth = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+        profileModelSubject = new Subject<>();
+        firebaseAuth.addAuthStateListener(firebaseAuth1 -> {
+            FirebaseUser currentUser = firebaseAuth1.getCurrentUser();
+            if (currentUser != null) {
+                String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
+
+                profileModelFirebaseRepository.getDocument(path, ProfileModel.class).subscribe(profileModel -> {
+                    profileModelSubject.setState(profileModel);
+                });
+            } else {
+                profileModelSubject.setState(null);
+            }
+        });
     }
 
     @Override
-    public void login(String email, String password, Observer<String> observer) {
+    public Subject<String> login(String email, String password) {
+        Subject<String> subject = new Subject<>();
 
+        if (email.isEmpty() || password.isEmpty()) {
+            subject.setState("Some Fields Are Empty");
+            return subject;
+        }
+
+        firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                subject.setState(null);
+            } else {
+                subject.setState(task.getException().getMessage());
+            }
+        });
+        return subject;
     }
 
     @Override
     public void logout() {
-
+        profileModelSubject.setState(null);
+        firebaseAuth.signOut();
     }
 
     @Override
-    public void register(String email, String password, String username, Observer<String> observer) {
+    public boolean isLoggedIn() {
+        return firebaseAuth.getCurrentUser() != null;
+    }
+
+    @Override
+    public Subject<ProfileModel> getLoggedUserData() {
+        return profileModelSubject;
+    }
+
+    @Override
+    public Subject<String> register(String email, String password, String username) {
+
+        Subject<String> subject = new Subject<>();
 
         if (email.isEmpty() || password.isEmpty() || username.isEmpty()) {
-            observer.onChanged("Some Fields Are Empty");
-            return;
+            subject.setState("Some Fields Are Empty");
+            return subject;
         }
 
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
-                observer.onChanged(task.getException().getMessage());
+                subject.setState(task.getException().getMessage());
             }
         })
                 .continueWithTask(task -> {
@@ -66,24 +106,19 @@ public class FirebaseAuthenticationService implements AuthenticationService {
                         profile.email = currentUser.getEmail();
                         profile.username = username;
 
-                        setLoggedUserData(profile);
+                        profileModelSubject.setState(profile);
 
-                        String path = USER_DATA_COLLECTION_PATH + "/" + currentUser.getUid();
-                        firestore.document(path).set(profile)
-                                .addOnSuccessListener(documentReference -> observer.onChanged(null))
-                                .addOnFailureListener(e -> observer.onChanged("Creation failed"));
+                        profileModelFirebaseRepository.setDocument(USER_DATA_COLLECTION_PATH, currentUser.getUid(), profile).subscribe(created -> {
+                            if (!created) {
+                                subject.setState("Creation failed");
+                            } else {
+                                subject.setState(null);
+                            }
+                        });
                     }
 
                     return null;
                 });
-    }
-
-    private void setLoggedUserData(ProfileModel profile) {
-        if (loggedUserData == null) {
-            loggedUserData = new LoggedUserData();
-        }
-        loggedUserData.id = profile.id;
-        loggedUserData.email = profile.email;
-        loggedUserData.name = profile.username;
+        return subject;
     }
 }

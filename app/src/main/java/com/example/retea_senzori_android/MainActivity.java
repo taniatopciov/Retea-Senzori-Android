@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.retea_senzori_android.authentication.service.AuthenticationService;
+import com.example.retea_senzori_android.authentication.service.FirebaseAuthenticationService;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
 import com.example.retea_senzori_android.services.TestService;
@@ -61,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
     private void registerServices() {
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
+        AuthenticationService authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>());
+
         serviceLocator.register(TestService.class, new TestServiceImpl(new FirebaseRepositoryImpl<>()));
+        serviceLocator.register(AuthenticationService.class, authenticationService);
     }
 }
