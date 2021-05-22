@@ -6,6 +6,6 @@ import androidx.lifecycle.ViewModel;
 
 public class NodeDetailsViewModel extends ViewModel {
     // TODO: Implement the ViewModel
-    public MutableLiveData<String> node_name;
+    public MutableLiveData<String> node_name = new MutableLiveData<>();
 
 }

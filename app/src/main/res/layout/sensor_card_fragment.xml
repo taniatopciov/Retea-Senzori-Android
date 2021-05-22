@@ -9,13 +9,15 @@
         android:layout_height="120dp"
         android:layout_margin="8dp"
         app:cardBackgroundColor="@color/amber_700"
+        app:cardCornerRadius="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp">
+            android:layout_height="120dp"
+            android:background="@color/white">
 
             <TextView
                 android:id="@+id/sensorName"
@@ -25,6 +27,7 @@
                 android:text="@string/sensor1_name"
                 android:textColor="@color/amber_700"
                 android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -38,6 +41,7 @@
                 android:text="@string/sensor_data_text"
                 android:textColor="@color/amber_700"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -50,6 +54,7 @@
                 android:text="@string/sensor_data_value"
                 android:textColor="@color/light_green_800"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
