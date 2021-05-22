@@ -1,5 +1,9 @@
 package com.example.retea_senzori_android.sensor;
 
+import org.jetbrains.annotations.NotNull;
+
+import androidx.annotation.NonNull;
+
 public enum SensorTypes {
     NO_TYPE((byte) 0),
     RAIN_SENSOR((byte) 1),
@@ -22,5 +26,18 @@ public enum SensorTypes {
             }
         }
         throw new IllegalArgumentException("Invalid Sensor Type Value ");
+    }
+
+    @NonNull
+    @NotNull
+    @Override
+    public String toString() {
+        String value = super.toString();
+
+        if (value.contains("TEMP")) {
+            value = value.replace("TEMP", "TEMPERATURE");
+        }
+
+        return value.replace("_", " ");
     }
 }

@@ -10,7 +10,6 @@ import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
 import com.example.retea_senzori_android.services.TestService;
 import com.example.retea_senzori_android.services.impl.TestServiceImpl;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,6 +17,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 public class MainActivity extends AppCompatActivity {
+
+    private AuthenticationService authenticationService;
+
     private NavController navController;
 
     @Override
@@ -29,12 +31,12 @@ public class MainActivity extends AppCompatActivity {
 
         registerServices();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
-        fab.setOnClickListener(view -> {
-            navController.navigate(R.id.nav_login_fragment);
+        authenticationService.getLoggedUserData().subscribe(userData -> {
+            if (userData == null) {
+                navController.navigate(R.id.nav_login_fragment);
+            }
         });
     }
 
@@ -53,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings_logout) {
+            authenticationService.logout();
             return true;
         }
 
@@ -63,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private void registerServices() {
         ServiceLocator serviceLocator = ServiceLocator.getInstance();
 
-        AuthenticationService authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>());
+        authenticationService = new FirebaseAuthenticationService(new FirebaseRepositoryImpl<>());
 
         serviceLocator.register(TestService.class, new TestServiceImpl(new FirebaseRepositoryImpl<>()));
         serviceLocator.register(AuthenticationService.class, authenticationService);

@@ -24,13 +24,17 @@ import androidx.recyclerview.widget.RecyclerView;
 public class PairedBluetoothDevicesDialogFragment extends DialogFragment {
 
     private BluetoothPairedDevicesAdapter bluetoothPairedDevicesAdapter;
+    private Consumer<BluetoothDevice> bluetoothDeviceConsumer;
 
     public PairedBluetoothDevicesDialogFragment() {
         // Empty constructor required for DialogFragment
     }
 
-    public static PairedBluetoothDevicesDialogFragment newInstance() {
-        return new PairedBluetoothDevicesDialogFragment();
+    public static PairedBluetoothDevicesDialogFragment newInstance(Consumer<BluetoothDevice> bluetoothDeviceConsumer) {
+        PairedBluetoothDevicesDialogFragment pairedBluetoothDevicesDialogFragment = new PairedBluetoothDevicesDialogFragment();
+        pairedBluetoothDevicesDialogFragment.bluetoothDeviceConsumer = bluetoothDeviceConsumer;
+
+        return pairedBluetoothDevicesDialogFragment;
     }
 
     @NonNull
@@ -46,9 +50,8 @@ public class PairedBluetoothDevicesDialogFragment extends DialogFragment {
         View view = LayoutInflater.from(getContext()).inflate(R.layout.paired_devices_list, null);
 
         bluetoothPairedDevicesAdapter = new BluetoothPairedDevicesAdapter(new ArrayList<>(pairedDevices), device -> {
-            Consumer<BluetoothDevice> bluetoothDeviceConnectEvent = (Consumer<BluetoothDevice>) getTargetFragment();
-            if (bluetoothDeviceConnectEvent != null) {
-                bluetoothDeviceConnectEvent.accept(device);
+            if (bluetoothDeviceConsumer != null) {
+                bluetoothDeviceConsumer.accept(device);
             }
             dismiss();
         });

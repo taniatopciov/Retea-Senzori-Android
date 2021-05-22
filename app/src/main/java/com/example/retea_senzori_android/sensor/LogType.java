@@ -1,5 +1,9 @@
 package com.example.retea_senzori_android.sensor;
 
+import org.jetbrains.annotations.NotNull;
+
+import androidx.annotation.NonNull;
+
 public enum LogType {
     LOG_STARTED((byte) 0),
     LOG_DATA((byte) 1),
@@ -20,5 +24,12 @@ public enum LogType {
             }
         }
         throw new IllegalArgumentException("Invalid Sensor Type Value ");
+    }
+
+    @NonNull
+    @NotNull
+    @Override
+    public String toString() {
+        return super.toString().replace("_", " ");
     }
 }
