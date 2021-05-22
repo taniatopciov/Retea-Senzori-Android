@@ -7,8 +7,11 @@ import android.view.ViewGroup;
 
 import com.example.retea_senzori_android.bluetooth.ui.PairedBluetoothDevicesDialogFragment;
 import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
+import com.example.retea_senzori_android.di.Injectable;
+import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.NodeModel;
-import com.example.retea_senzori_android.models.SensorModel;
+import com.example.retea_senzori_android.services.NodeService;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -19,21 +22,47 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class NodesView extends Fragment {
 
+    @Injectable
+    private NodeService nodeService;
+
+    public NodesView() {
+        ServiceLocator.getInstance().inject(this);
+    }
+
     private static final int PAIRED_BT_DEVICES_REQUEST_CODE = 310;
 
     private NodesLayoutFragmentBinding binding;
-    private ArrayList<NodeModel> nodeArray;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
         binding = NodesLayoutFragmentBinding.inflate(inflater, container, false);
 
+        NodeAdapter nodeAdapter = new NodeAdapter();
+
+        nodeService.getAllNodes().subscribe(nodeAdapter::addAllNodes);
+
         binding.addNodeFabButton.setOnClickListener(view -> {
             PairedBluetoothDevicesDialogFragment pairedBluetoothDevicesDialogFragment = PairedBluetoothDevicesDialogFragment.newInstance(device -> {
-                // TODO add Node Service
 
-                System.out.println(device.getName());
+                if (nodeService.findNodeByDeviceName(device.getName()) != null) {
+                    System.out.println("Node exists in list, will not be added");
+                    return;
+                }
+
+                NodeModel nodeModel = new NodeModel();
+                nodeModel.connectedBluetoothDevice = device.getName();
+                nodeModel.nodeName = nodeModel.connectedBluetoothDevice;
+                nodeModel.sensors = new ArrayList<>();
+
+                nodeService.addNode(nodeModel).subscribe(status -> {
+                    if (!status) {
+                        Snackbar.make(view, "Could not add node", Snackbar.LENGTH_SHORT)
+                                .show();
+                    } else {
+                        nodeAdapter.addNode(nodeModel);
+                    }
+                });
 
 //                bluetoothNodeProtocol.connect(device, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
             });
@@ -41,12 +70,8 @@ public class NodesView extends Fragment {
             pairedBluetoothDevicesDialogFragment.show(getParentFragmentManager(), "paired_bt_devices_fragment");
         });
 
-        nodeArray = new ArrayList<>();
-        ArrayList<SensorModel> sensors = new ArrayList<>();
-        sensors.add(new SensorModel("Gas"));
-        sensors.add(new SensorModel("Humidity"));
-        nodeArray.add(new NodeModel("Stolen Node", sensors));
-        binding.idRVNode.setAdapter(new NodeAdapter(getContext(), nodeArray));
+
+        binding.idRVNode.setAdapter(nodeAdapter);
         binding.idRVNode.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return binding.getRoot();

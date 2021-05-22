@@ -1,27 +1,24 @@
 package com.example.retea_senzori_android.nodes;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.models.NodeModel;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
 
-    private Context context;
-    private ArrayList<NodeModel> nodeModelArrayList;
+    private final List<NodeModel> nodeModelArrayList = new ArrayList<>();
 
-    public NodeAdapter(Context context, ArrayList<NodeModel> nodeModelArrayList) {
-        this.context = context;
-        this.nodeModelArrayList = nodeModelArrayList;
+    public NodeAdapter() {
     }
 
     @NonNull
@@ -36,13 +33,28 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
     public void onBindViewHolder(@NonNull NodeAdapter.Viewholder holder, int position) {
         NodeModel model = nodeModelArrayList.get(position);
         holder.nodeName.setText(model.nodeName);
-        holder.sensor1.setText(model.sensors.get(0).sensorType);
-        holder.sensor2.setText(model.sensors.get(1).sensorType);
+        if (model.sensors != null && model.sensors.size() > 2) {
+            holder.sensor1.setText(model.sensors.get(0).sensorType);
+            holder.sensor2.setText(model.sensors.get(1).sensorType);
+        } else {
+            holder.sensor1.setText("");
+            holder.sensor2.setText("");
+        }
     }
 
     @Override
     public int getItemCount() {
         return nodeModelArrayList.size();
+    }
+
+    public void addAllNodes(List<NodeModel> nodeModels) {
+        this.nodeModelArrayList.addAll(nodeModels);
+        notifyDataSetChanged();
+    }
+
+    public void addNode(NodeModel nodeModel) {
+        nodeModelArrayList.add(nodeModel);
+        notifyDataSetChanged();
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {
