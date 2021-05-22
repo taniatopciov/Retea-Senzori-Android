@@ -5,17 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
+
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.retea_senzori_android.R;
-import com.example.retea_senzori_android.databinding.LoginFragmentBinding;
-import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
-
-import java.util.ArrayList;
 
 public class NodesView extends Fragment {
 
@@ -26,7 +23,15 @@ public class NodesView extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         binding = NodesLayoutFragmentBinding.inflate(inflater, container, false);
+
+        binding.addNodeFabButton.setOnClickListener(view -> {
+
+        });
+
         nodeArray = new ArrayList<>();
+        ArrayList<SensorModel> sensors = new ArrayList<>();
+        sensors.add(new SensorModel("Gas"));
+        nodeArray.add(new NodeModel("Stolen Node", sensors));
         //nodeArray.add(new NodeModel("Node1", "Gas", "Rain"));
         //nodeArray.add(new NodeModel("Funny Node", "Humidity", "Rain"));
         //nodeArray.add(new NodeModel("My Node", "Rain", "Temperature"));
@@ -35,11 +40,6 @@ public class NodesView extends Fragment {
         binding.idRVNode.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
