@@ -1,4 +1,4 @@
-package com.example.retea_senzori_android.persistance;
+package com.example.retea_senzori_android.observables;
 
 public interface Observer<T> {
     void observe(T value);

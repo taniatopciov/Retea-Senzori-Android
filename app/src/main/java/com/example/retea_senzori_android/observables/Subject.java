@@ -1,9 +1,9 @@
-package com.example.retea_senzori_android.persistance;
+package com.example.retea_senzori_android.observables;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Subject<T> {
+public class Subject<T> {
     private final List<Observer<T>> observers = new ArrayList<>();
 
     public void subscribe(Observer<T> observer) {
@@ -14,7 +14,11 @@ public abstract class Subject<T> {
         observers.remove(observer);
     }
 
-    public void notifyObservers(T state) {
+    public void setState(T state) {
+        notifyObservers(state);
+    }
+
+    protected void notifyObservers(T state) {
         for (Observer<T> observer : observers) {
             observer.observe(state);
         }
