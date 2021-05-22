@@ -11,6 +11,8 @@ public interface FirebaseRepository<T extends FirebaseDocument> {
 
     Subject<String> createDocument(String pathToCollection, T document);
 
+    Subject<Boolean> setDocument(String pathToCollection, String documentId, T document);
+
     Subject<Boolean> deleteDocument(String pathToCollection, String documentId);
 
     Subject<Boolean> updateDocument(String pathToDocument, T document);

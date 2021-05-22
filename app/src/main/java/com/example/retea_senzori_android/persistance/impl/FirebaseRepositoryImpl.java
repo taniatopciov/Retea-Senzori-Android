@@ -75,6 +75,17 @@ public class FirebaseRepositoryImpl<T extends FirebaseDocument> implements Fireb
     }
 
     @Override
+    public Subject<Boolean> setDocument(String pathToCollection, String documentId, T document) {
+        Subject<Boolean> subject = new Subject<>();
+
+        firestore.collection(pathToCollection).document(documentId).set(document).addOnSuccessListener(documentSnapshot -> {
+          subject.setState(true);
+        }).addOnFailureListener(e -> subject.setState(false));
+
+        return subject;
+    }
+
+    @Override
     public Subject<Boolean> deleteDocument(String pathToCollection, String documentId) {
         return null;
     }
