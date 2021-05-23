@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,7 +61,9 @@ public class SensorFragment extends Fragment {
                     TextView text2 = new TextView(getContext());
 
                     text1.setText(String.valueOf(data.time));
+                    text1.setGravity(Gravity.CENTER);
                     text2.setText(String.valueOf(data.value));
+                    text2.setGravity(Gravity.CENTER);
 
                     tr.addView(text1);
                     tr.addView(text2);
