@@ -12,12 +12,13 @@ import com.example.retea_senzori_android.models.SensorModel;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder> {
 
-    private Context context;
-    private ArrayList<SensorModel> sensorArrayList;
+    private final Context context;
+    private final ArrayList<SensorModel> sensorArrayList;
 
     public SensorAdapter(Context context, ArrayList<SensorModel> sensorArrayList) {
         this.context = context;
@@ -36,6 +37,9 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         SensorModel model = sensorArrayList.get(position);
         holder.sensorName.setText(model.sensorType);
+//        holder.viewDetailsButton.setOnClickListener(view -> {
+//            Navigation.findNavController(view).navigate(NodesViewDirections.actionNodesViewToNodeDetailsFragment(model));
+//        });
     }
 
     @Override
@@ -44,7 +48,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     }
 
     public class Viewholder extends RecyclerView.ViewHolder {
-        private TextView sensorName;
+        private final TextView sensorName;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);

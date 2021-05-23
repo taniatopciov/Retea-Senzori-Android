@@ -67,7 +67,11 @@
     <fragment
         android:id="@+id/sensorsView"
         android:name="com.example.retea_senzori_android.nodes.SensorsView"
-        android:label="SensorsView" />
+        android:label="SensorsView" >
+        <argument
+            android:name="sensorModel"
+            app:argType="com.example.retea_senzori_android.models.SensorModel" />
+    </fragment>
     <fragment
         android:id="@+id/nodeDetailsFragment"
         android:name="com.example.retea_senzori_android.nodes.NodeDetailsFragment"
