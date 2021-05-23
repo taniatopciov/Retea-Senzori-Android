@@ -13,10 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.retea_senzori_android.R;
+import com.example.retea_senzori_android.databinding.SensorFragmentBinding;
+import com.example.retea_senzori_android.models.NodeModel;
+import com.example.retea_senzori_android.models.SensorModel;
 
 public class SensorFragment extends Fragment {
 
     private SensorViewModel mViewModel;
+
+    private SensorFragmentBinding binding;
 
     public static SensorFragment newInstance() {
         return new SensorFragment();
@@ -25,14 +30,26 @@ public class SensorFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.sensor_fragment, container, false);
+
+        binding = SensorFragmentBinding.inflate(inflater, container, false);
+        mViewModel = new ViewModelProvider(requireActivity()).get(SensorViewModel.class);
+
+        SensorModel sensorModel = SensorFragmentArgs.fromBundle(getArguments()).getSensorModel();
+        mViewModel.setSensorType(sensorModel.sensorType);
+        mViewModel.getSensorType().observe(getViewLifecycleOwner(), sensorType -> binding.sensorType.setText(sensorType.toString()));
+
+            return binding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(SensorViewModel.class);
-        // TODO: Use the ViewModel
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
 }

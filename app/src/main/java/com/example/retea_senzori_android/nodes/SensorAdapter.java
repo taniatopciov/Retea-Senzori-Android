@@ -34,12 +34,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
         SensorModel model = sensorArrayList.get(position);
         holder.sensorName.setText(model.sensorType.toString());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model));
-            }
-        });
+        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model)));
     }
 
     @Override
@@ -60,7 +55,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
-            sensorName = itemView.findViewById(R.id.sensorName);
+            sensorName = itemView.findViewById(R.id.sensorType);
         }
     }
 }
