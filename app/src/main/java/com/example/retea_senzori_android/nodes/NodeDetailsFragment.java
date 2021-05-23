@@ -76,12 +76,23 @@ public class NodeDetailsFragment extends Fragment {
             bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
         });
         mViewModel.getNode().observe(getViewLifecycleOwner(), node -> {
-            binding.testId.setText(node.getNodeName());
+            binding.nodeNameNodePage.setText(node.getNodeName());
+            binding.bluetoothDeviceNodePage.setText(node.getConnectedBluetoothDevice());
             sensorAdapter.setSensors(node.getSensors());
         });
 
         binding.idRVSensor.setAdapter(sensorAdapter);
         binding.idRVSensor.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        binding.changeNodeNameButton.setOnClickListener(view -> {
+            RenameNodeDialogFragment renameNodeDialogFragment = RenameNodeDialogFragment.newInstance(binding.nodeNameNodePage.getText().toString(), newName -> {
+                nodeModel.nodeName = newName;
+                mViewModel.setName(newName);
+                nodeService.updateNode(nodeModel).subscribe(System.out::println);
+            });
+            renameNodeDialogFragment.setTargetFragment(this, RENAME_NODE_DIALOG_REQUEST_CODE);
+            renameNodeDialogFragment.show(getParentFragmentManager(), "rename_node_dialog");
+        });
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
@@ -115,21 +126,6 @@ public class NodeDetailsFragment extends Fragment {
                 stopLiveDataRead();
             } else {
                 startLiveDataRead();
-        binding.changeNodeNameButton.setOnClickListener(view -> {
-            RenameNodeDialogFragment renameNodeDialogFragment = RenameNodeDialogFragment.newInstance(binding.nodeNameNodePage.getText().toString(), newName -> {
-                nodeModel.nodeName = newName;
-                mViewModel.setName(newName);
-                nodeService.updateNode(nodeModel).subscribe(System.out::println);
-            });
-            renameNodeDialogFragment.setTargetFragment(this, RENAME_NODE_DIALOG_REQUEST_CODE);
-            renameNodeDialogFragment.show(getParentFragmentManager(), "rename_node_dialog");
-        });
-
-        binding.liveDataButton.setOnClickListener(view -> bluetoothNodeProtocol.readLiveData(sensorLogData -> {
-            // todo add cyclic reads
-            Node node = mViewModel.getNode().getValue();
-            if (node != null) {
-                node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
             }
         });
 
@@ -141,7 +137,6 @@ public class NodeDetailsFragment extends Fragment {
                 nodeService.updateNode(nodeModel).subscribe(System.out::println);
             });
         }));
-
         return binding.getRoot();
     }
 

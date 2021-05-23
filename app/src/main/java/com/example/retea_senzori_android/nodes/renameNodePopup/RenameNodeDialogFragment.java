@@ -41,7 +41,6 @@ public class RenameNodeDialogFragment extends DialogFragment {
         renameNodeTextView.setText(nodeName);
 
         return new AlertDialog.Builder(getActivity())
-                .setTitle("Rename Node")
                 .setView(view)
                 .setPositiveButton("Rename", (dialogInterface, i) -> {
                     onRenameButtonClickConsumer.accept(renameNodeTextView.getText().toString());
