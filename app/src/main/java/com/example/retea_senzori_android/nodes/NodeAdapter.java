@@ -6,15 +6,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.models.NodeModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
 
@@ -36,7 +36,7 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
         NodeModel model = nodeModelArrayList.get(position);
         holder.nodeName.setText(model.nodeName);
         holder.viewDetailsButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(NodesViewDirections.actionNodesViewToNodeDetailsFragment(model));
+            Navigation.findNavController(view).navigate(HomePageNodesFragmentDirections.actionNodesViewToNodeDetailsFragment(model));
         });
         if (model.sensors != null && model.sensors.size() > 2) {
             holder.sensor1.setText(model.sensors.get(0).sensorType.toString());

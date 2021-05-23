@@ -7,10 +7,10 @@ import java.util.List;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class NodesViewViewModel extends ViewModel {
+public class HomePageNodesViewModel extends ViewModel {
     private final MutableLiveData<List<NodeModel>> nodeModels;
 
-    public NodesViewViewModel() {
+    public HomePageNodesViewModel() {
         nodeModels = new MutableLiveData<>();
     }
 

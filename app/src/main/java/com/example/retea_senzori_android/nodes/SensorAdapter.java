@@ -5,15 +5,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.nodes.factory.Sensor;
 import com.example.retea_senzori_android.utils.UIRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder> {
 
@@ -35,7 +36,9 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         System.out.println("Sensor Updated");
         Sensor model = sensorArrayList.get(position);
-        holder.sensorName.setText(model.getSensorModel().sensorType.toString());
+        holder.sensorName.setText(model.getSensorModel().toString());
+        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model)));
+
         model.subscribe(value -> {
             uiRunner.run(() -> {
                 holder.sensorLiveValue.setText(String.valueOf(value));
