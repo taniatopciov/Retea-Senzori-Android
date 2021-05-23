@@ -15,8 +15,8 @@ import com.example.retea_senzori_android.services.logs.LogsService;
 import com.example.retea_senzori_android.services.logs.impl.LogsServiceImpl;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.services.nodes.impl.NodeServiceImpl;
-import com.example.retea_senzori_android.utils.UIRunner;
-import com.example.retea_senzori_android.utils.UIRunnerImpl;
+import com.example.retea_senzori_android.utils.runners.UIRunner;
+import com.example.retea_senzori_android.utils.runners.UIRunnerImpl;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
