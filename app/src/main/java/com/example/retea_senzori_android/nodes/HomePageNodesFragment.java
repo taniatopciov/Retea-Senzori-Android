@@ -5,8 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.retea_senzori_android.bluetooth.ui.PairedBluetoothDevicesDialogFragment;
-import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
+import com.example.retea_senzori_android.databinding.HomePageNodesFragmentBinding;
 import com.example.retea_senzori_android.di.Injectable;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.NodeModel;
@@ -15,32 +21,26 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-public class NodesView extends Fragment {
+public class HomePageNodesFragment extends Fragment {
 
     @Injectable
     private NodeService nodeService;
 
-    public NodesView() {
+    public HomePageNodesFragment() {
         ServiceLocator.getInstance().inject(this);
     }
 
     private static final int PAIRED_BT_DEVICES_REQUEST_CODE = 310;
 
-    private NodesLayoutFragmentBinding binding;
+    private HomePageNodesFragmentBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        binding = NodesLayoutFragmentBinding.inflate(inflater, container, false);
+        binding = HomePageNodesFragmentBinding.inflate(inflater, container, false);
         NodeAdapter nodeAdapter = new NodeAdapter();
 
-        NodesViewViewModel viewModel = new ViewModelProvider(requireActivity()).get(NodesViewViewModel.class);
+        HomePageNodesViewModel viewModel = new ViewModelProvider(requireActivity()).get(HomePageNodesViewModel.class);
         viewModel.getNodeModels().observe(getViewLifecycleOwner(), nodeAdapter::addAllNodes);
 
         nodeService.getAllNodes().subscribe(viewModel::setNodeModels);

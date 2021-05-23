@@ -5,14 +5,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.models.SensorModel;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder> {
 
@@ -32,6 +33,13 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         SensorModel model = sensorArrayList.get(position);
         holder.sensorName.setText(model.sensorType.toString());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model));
+            }
+        });
     }
 
     @Override
