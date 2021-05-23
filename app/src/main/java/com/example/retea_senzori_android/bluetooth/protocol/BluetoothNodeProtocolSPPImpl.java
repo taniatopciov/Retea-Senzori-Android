@@ -65,8 +65,9 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
 
     @Override
     public void connect(BluetoothDevice device, Consumer<SDCardErrors> onSDCardErrorReceived) {
-
-        disconnect();
+        if (bluetoothSocket != null) {
+            return;
+        }
 
         try {
             bluetoothSocket = device.createRfcommSocketToServiceRecord(sppUuid);
@@ -81,12 +82,17 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
                     bluetoothSocket.connect();
                     onConnectedDeviceListener.accept(device.getName());
                 } catch (IOException e) {
-                    System.out.println("Already connected to + " + device.getName());
+                    System.out.println("Already connected to " + device.getName());
+                    onConnectedDeviceListener.accept(device.getName());
                 }
 
                 bluetoothInputStream = bluetoothSocket.getInputStream();
                 bluetoothOutputStream = bluetoothSocket.getOutputStream();
                 running.set(true);
+
+                if (bluetoothInputStream == null || bluetoothOutputStream == null) {
+                    running.set(false);
+                }
 
                 byte[] headerMessage = new byte[MESSAGE_HEADER_LENGTH];
 
@@ -173,7 +179,7 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
                 }
 
                 bluetoothSocket.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 try {
                     bluetoothSocket.close();
@@ -193,7 +199,7 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
 
                 bluetoothSocket.close();
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         running.set(false);

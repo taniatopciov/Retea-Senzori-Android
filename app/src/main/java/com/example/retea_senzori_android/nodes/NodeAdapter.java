@@ -38,7 +38,7 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
         holder.viewDetailsButton.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(HomePageNodesFragmentDirections.actionNodesViewToNodeDetailsFragment(model));
         });
-        if (model.sensors != null && model.sensors.size() > 2) {
+        if (model.sensors != null && model.sensors.size() >= 2) {
             holder.sensor1.setText(model.sensors.get(0).sensorType.toString());
             holder.sensor2.setText(model.sensors.get(1).sensorType.toString());
         } else {

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.nodes.factory.Sensor;
-import com.example.retea_senzori_android.utils.UIRunner;
+import com.example.retea_senzori_android.utils.runners.UIRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,15 +34,12 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
     @Override
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
-        System.out.println("Sensor Updated");
         Sensor model = sensorArrayList.get(position);
-        holder.sensorName.setText(model.getSensorModel().toString());
+        holder.sensorName.setText(model.getSensorModel().sensorType.toString());
         holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model.getSensorModel())));
-        model.subscribe(value -> {
-            uiRunner.run(() -> {
-                holder.sensorLiveValue.setText(String.valueOf(value));
-            });
-        });        
+        model.subscribe(value ->
+                uiRunner.run(() ->
+                        holder.sensorLiveValue.setText(String.valueOf(value))));
     }
 
     @Override

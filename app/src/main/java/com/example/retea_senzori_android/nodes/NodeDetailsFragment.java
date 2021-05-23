@@ -4,6 +4,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocol;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocolSPPImpl;
 import com.example.retea_senzori_android.databinding.NodeDetailsFragmentBinding;
@@ -24,7 +27,8 @@ import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
 import com.example.retea_senzori_android.nodes.renameNodePopup.RenameNodeDialogFragment;
 import com.example.retea_senzori_android.services.nodes.NodeService;
-import com.example.retea_senzori_android.utils.UIRunner;
+import com.example.retea_senzori_android.utils.runners.CyclicRunner;
+import com.example.retea_senzori_android.utils.runners.UIRunner;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
@@ -47,6 +51,7 @@ public class NodeDetailsFragment extends Fragment {
 
     private NodeDetailsViewModel mViewModel;
     private NodeDetailsFragmentBinding binding;
+    private CyclicRunner cyclicRunner;
 
     public NodeDetailsFragment() {
         ServiceLocator.getInstance().inject(this);
@@ -62,6 +67,22 @@ public class NodeDetailsFragment extends Fragment {
         binding = NodeDetailsFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(NodeDetailsViewModel.class);
 
+        NodeModel nodeModel = NodeDetailsFragmentArgs.fromBundle(getArguments()).getNodeModel();
+        mViewModel.setNode(NodeFactory.fromModel(nodeModel));
+
+        SensorAdapter sensorAdapter = new SensorAdapter(uiRunner);
+
+        mViewModel.getBluetoothDevice().observe(getViewLifecycleOwner(), bluetoothDevice -> {
+            bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
+        });
+        mViewModel.getNode().observe(getViewLifecycleOwner(), node -> {
+            binding.testId.setText(node.getNodeName());
+            sensorAdapter.setSensors(node.getSensors());
+        });
+
+        binding.idRVSensor.setAdapter(sensorAdapter);
+        binding.idRVSensor.setLayoutManager(new LinearLayoutManager(getContext()));
+
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             Snackbar.make(binding.nodePageId, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
@@ -74,9 +95,6 @@ public class NodeDetailsFragment extends Fragment {
 //        } else {
 //        }
 
-        NodeModel nodeModel = NodeDetailsFragmentArgs.fromBundle(getArguments()).getNodeModel();
-        mViewModel.setNode(NodeFactory.fromModel(nodeModel));
-
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         Optional<BluetoothDevice> bluetoothDeviceOptional = pairedDevices.stream().filter(device -> device.getName().equals(nodeModel.connectedBluetoothDevice))
                 .findFirst();
@@ -86,26 +104,17 @@ public class NodeDetailsFragment extends Fragment {
         }
         mViewModel.setBluetoothDevice(bluetoothDeviceOptional.get());
 
-        SensorAdapter sensorAdapter = new SensorAdapter(uiRunner);
-
-        mViewModel.getBluetoothDevice().observe(getViewLifecycleOwner(), bluetoothDevice -> {
-            bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
-        });
-
-        mViewModel.getNode().observe(getViewLifecycleOwner(), node -> {
-            binding.nodeNameNodePage.setText(node.getNodeName());
-            binding.bluetoothDeviceNodePage.setText(node.getConnectedBluetoothDevice());
-            sensorAdapter.setSensors(node.getSensors());
-        });
-
-        binding.idRVSensor.setAdapter(sensorAdapter);
-        binding.idRVSensor.setLayoutManager(new LinearLayoutManager(getContext()));
 
         bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> {
-            Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_SHORT)
                     .show();
         });
 
+        binding.liveDataButton.setOnClickListener(view -> {
+            if (cyclicRunner != null) {
+                stopLiveDataRead();
+            } else {
+                startLiveDataRead();
         binding.changeNodeNameButton.setOnClickListener(view -> {
             RenameNodeDialogFragment renameNodeDialogFragment = RenameNodeDialogFragment.newInstance(binding.nodeNameNodePage.getText().toString(), newName -> {
                 nodeModel.nodeName = newName;
@@ -122,7 +131,7 @@ public class NodeDetailsFragment extends Fragment {
             if (node != null) {
                 node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
             }
-        }));
+        });
 
         binding.logDataButton.setOnClickListener(view -> bluetoothNodeProtocol.readSensorCount(count -> {
             bluetoothNodeProtocol.readSensorTypes(count, sensorTypes -> {
@@ -144,5 +153,30 @@ public class NodeDetailsFragment extends Fragment {
             bluetoothNodeProtocol.disconnect();
             bluetoothNodeProtocol = null;
         }
+        stopLiveDataRead();
+    }
+
+    private void startLiveDataRead() {
+        cyclicRunner = new CyclicRunner(1000);
+        cyclicRunner.run(() ->
+                bluetoothNodeProtocol.readLiveData(sensorLogData -> {
+                    Node node = mViewModel.getNode().getValue();
+                    if (node != null) {
+                        node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
+                    }
+                }));
+    }
+
+    private void stopLiveDataRead() {
+        if (cyclicRunner != null) {
+            cyclicRunner.stop();
+            cyclicRunner = null;
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
