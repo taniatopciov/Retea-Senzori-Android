@@ -17,7 +17,8 @@ import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
 import com.example.retea_senzori_android.services.nodes.NodeService;
-import com.example.retea_senzori_android.utils.UIRunner;
+import com.example.retea_senzori_android.utils.runners.CyclicRunner;
+import com.example.retea_senzori_android.utils.runners.UIRunner;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public class NodeDetailsFragment extends Fragment {
 
     private NodeDetailsViewModel mViewModel;
     private NodeDetailsFragmentBinding binding;
+    private CyclicRunner cyclicRunner;
 
     public NodeDetailsFragment() {
         ServiceLocator.getInstance().inject(this);
@@ -99,17 +101,17 @@ public class NodeDetailsFragment extends Fragment {
 
 
         bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> {
-            Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_SHORT)
                     .show();
         });
 
-        binding.liveDataButton.setOnClickListener(view -> bluetoothNodeProtocol.readLiveData(sensorLogData -> {
-            // todo add cyclic reads
-            Node node = mViewModel.getNode().getValue();
-            if (node != null) {
-                node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
+        binding.liveDataButton.setOnClickListener(view -> {
+            if (cyclicRunner != null) {
+                stopLiveDataRead();
+            } else {
+                startLiveDataRead();
             }
-        }));
+        });
 
         binding.logDataButton.setOnClickListener(view -> bluetoothNodeProtocol.readSensorCount(count -> {
             bluetoothNodeProtocol.readSensorTypes(count, sensorTypes -> {
@@ -130,6 +132,25 @@ public class NodeDetailsFragment extends Fragment {
         if (bluetoothNodeProtocol != null) {
             bluetoothNodeProtocol.disconnect();
             bluetoothNodeProtocol = null;
+        }
+        stopLiveDataRead();
+    }
+
+    private void startLiveDataRead() {
+        cyclicRunner = new CyclicRunner(1000);
+        cyclicRunner.run(() ->
+                bluetoothNodeProtocol.readLiveData(sensorLogData -> {
+                    Node node = mViewModel.getNode().getValue();
+                    if (node != null) {
+                        node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
+                    }
+                }));
+    }
+
+    private void stopLiveDataRead() {
+        if (cyclicRunner != null) {
+            cyclicRunner.stop();
+            cyclicRunner = null;
         }
     }
 }
