@@ -6,7 +6,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.retea_senzori_android.R;
-import com.example.retea_senzori_android.models.SensorModel;
+import com.example.retea_senzori_android.nodes.factory.Sensor;
+import com.example.retea_senzori_android.utils.UIRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder> {
 
-    private List<SensorModel> sensorArrayList = new ArrayList<>();
+    private List<Sensor> sensorArrayList = new ArrayList<>();
+    private final UIRunner uiRunner;
 
-    public SensorAdapter() {
+    public SensorAdapter(UIRunner uiRunner) {
+        this.uiRunner = uiRunner;
     }
 
     @NonNull
@@ -30,8 +33,14 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
     @Override
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
-        SensorModel model = sensorArrayList.get(position);
-        holder.sensorName.setText(model.sensorType.toString());
+        System.out.println("Sensor Updated");
+        Sensor model = sensorArrayList.get(position);
+        holder.sensorName.setText(model.getSensorModel().sensorType.toString());
+        model.subscribe(value -> {
+            uiRunner.run(() -> {
+                holder.sensorLiveValue.setText(String.valueOf(value));
+            });
+        });
     }
 
     @Override
@@ -39,7 +48,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
         return sensorArrayList.size();
     }
 
-    public void setSensors(List<SensorModel> sensors) {
+    public void setSensors(List<Sensor> sensors) {
         this.sensorArrayList = sensors;
         if (sensors == null) {
             this.sensorArrayList = new ArrayList<>();
@@ -49,10 +58,12 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
     public static class Viewholder extends RecyclerView.ViewHolder {
         private final TextView sensorName;
+        private final TextView sensorLiveValue;
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
             sensorName = itemView.findViewById(R.id.sensorName);
+            sensorLiveValue = itemView.findViewById(R.id.sensorDataValue);
         }
     }
 }
