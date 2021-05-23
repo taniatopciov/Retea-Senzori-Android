@@ -8,8 +8,11 @@ import com.example.retea_senzori_android.authentication.service.AuthenticationSe
 import com.example.retea_senzori_android.authentication.service.FirebaseAuthenticationService;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.ProfileModel;
+import com.example.retea_senzori_android.models.SensorLogFile;
 import com.example.retea_senzori_android.persistance.FirebaseRepository;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
+import com.example.retea_senzori_android.services.logs.LogsService;
+import com.example.retea_senzori_android.services.logs.impl.LogsServiceImpl;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.services.nodes.impl.NodeServiceImpl;
 import com.example.retea_senzori_android.utils.UIRunner;
@@ -80,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
 
         NodeServiceImpl nodeService = new NodeServiceImpl(profileModelFirebaseRepository);
         serviceLocator.register(NodeService.class, nodeService);
+
+        FirebaseRepository<SensorLogFile> logsFirebaseRepository = new FirebaseRepositoryImpl<>();
+
+        LogsServiceImpl logsService = new LogsServiceImpl(logsFirebaseRepository);
+        serviceLocator.register(LogsService.class, logsService);
 
         authenticationService.getLoggedUserData().subscribe(nodeService);
     }
