@@ -1,15 +1,19 @@
 package com.example.retea_senzori_android.models;
 
-public class SensorModel {
+import com.example.retea_senzori_android.sensor.SensorType;
 
-    public String sensorType;
+import java.io.Serializable;
+
+public class SensorModel implements Serializable {
+
+    public SensorType sensorType;
     public String logFileId;
 
     public SensorModel() {
 
     }
 
-    public SensorModel(String type) {
+    public SensorModel(SensorType type) {
         this.sensorType = type;
     }
 }

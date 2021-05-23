@@ -3,7 +3,7 @@ package com.example.retea_senzori_android.bluetooth.protocol;
 import android.bluetooth.BluetoothDevice;
 
 import com.example.retea_senzori_android.sensor.SensorLogData;
-import com.example.retea_senzori_android.sensor.SensorTypes;
+import com.example.retea_senzori_android.sensor.SensorType;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -15,7 +15,7 @@ public interface BluetoothNodeProtocol {
 
     void readSensorCount(Consumer<Integer> onSensorCountRead);
 
-    void readSensorTypes(int sensorCount, Consumer<SensorTypes[]> onSensorTypesRead);
+    void readSensorTypes(int sensorCount, Consumer<SensorType[]> onSensorTypesRead);
 
     void readLiveData(Consumer<SensorLogData> onLiveDataRead);
 

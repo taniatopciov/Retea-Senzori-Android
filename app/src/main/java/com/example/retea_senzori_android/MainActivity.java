@@ -4,22 +4,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import com.example.retea_senzori_android.authentication.service.AuthenticationService;
 import com.example.retea_senzori_android.authentication.service.FirebaseAuthenticationService;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.ProfileModel;
-import com.example.retea_senzori_android.observables.Observer;
 import com.example.retea_senzori_android.persistance.FirebaseRepository;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
-import com.example.retea_senzori_android.services.NodeService;
-import com.example.retea_senzori_android.services.TestService;
-import com.example.retea_senzori_android.services.impl.NodeServiceImpl;
-import com.example.retea_senzori_android.services.impl.TestServiceImpl;
+import com.example.retea_senzori_android.services.nodes.NodeService;
+import com.example.retea_senzori_android.services.nodes.impl.NodeServiceImpl;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,11 +27,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        registerServices();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        registerServices();
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         authenticationService = new FirebaseAuthenticationService(profileModelFirebaseRepository);
 
-        serviceLocator.register(TestService.class, new TestServiceImpl(new FirebaseRepositoryImpl<>()));
         serviceLocator.register(AuthenticationService.class, authenticationService);
 
         NodeServiceImpl nodeService = new NodeServiceImpl(profileModelFirebaseRepository);

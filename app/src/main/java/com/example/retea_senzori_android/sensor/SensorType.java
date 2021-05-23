@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import androidx.annotation.NonNull;
 
-public enum SensorTypes {
+public enum SensorType {
     NO_TYPE((byte) 0),
     RAIN_SENSOR((byte) 1),
     GAS_SENSOR((byte) 2),
@@ -15,12 +15,12 @@ public enum SensorTypes {
 
     private final byte value;
 
-    SensorTypes(byte value) {
+    SensorType(byte value) {
         this.value = value;
     }
 
-    public static SensorTypes convert(byte value) {
-        for (SensorTypes type : SensorTypes.values()) {
+    public static SensorType convert(byte value) {
+        for (SensorType type : SensorType.values()) {
             if (type.value == value) {
                 return type;
             }

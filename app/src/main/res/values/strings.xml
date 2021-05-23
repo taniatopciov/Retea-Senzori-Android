@@ -43,5 +43,7 @@
     <string name="sensor_data_text">Live Sensor Data</string>
     <string name="sensor_data_value">Unavailable</string>
 
+    <string name="sensor_name">Sensor Name</string>
+
 
 </resources>

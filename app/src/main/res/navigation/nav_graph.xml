@@ -58,10 +58,39 @@
     </fragment>
     <fragment
         android:id="@+id/nodesView"
-        android:name="com.example.retea_senzori_android.nodes.NodesView"
-        android:label="NodesView" />
+        android:name="com.example.retea_senzori_android.nodes.HomePageNodesFragment"
+        android:label="NodesView" >
+        <action
+            android:id="@+id/action_nodesView_to_nodeDetailsFragment"
+            app:destination="@id/nodeDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/sensorsView"
         android:name="com.example.retea_senzori_android.nodes.SensorsView"
-        android:label="SensorsView" />
+        android:label="SensorsView" >
+        <argument
+            android:name="sensorModel"
+            app:argType="com.example.retea_senzori_android.models.SensorModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/nodeDetailsFragment"
+        android:name="com.example.retea_senzori_android.nodes.NodeDetailsFragment"
+        android:label="node_details_fragment"
+        tools:layout="@layout/node_details_fragment" >
+        <argument
+            android:name="nodeModel"
+            app:argType="com.example.retea_senzori_android.models.NodeModel" />
+        <action
+            android:id="@+id/navigateToSensorFragment"
+            app:destination="@id/sensorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sensorFragment"
+        android:name="com.example.retea_senzori_android.nodes.SensorFragment"
+        android:label="sensor_fragment"
+        tools:layout="@layout/sensor_fragment" >
+        <argument
+            android:name="sensorModel"
+            app:argType="com.example.retea_senzori_android.models.SensorModel" />
+    </fragment>
 </navigation>
