@@ -10,7 +10,7 @@ import com.example.retea_senzori_android.di.Injectable;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.sensor.SensorType;
-import com.example.retea_senzori_android.utils.UIRunner;
+import com.example.retea_senzori_android.utils.runners.UIRunner;
 
 import java.util.ArrayList;
 
