@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothSocket;
 
 import com.example.retea_senzori_android.sensor.NoArgConsumer;
 import com.example.retea_senzori_android.sensor.SensorLogData;
-import com.example.retea_senzori_android.sensor.SensorTypes;
+import com.example.retea_senzori_android.sensor.SensorType;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,8 +50,8 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
 
     private boolean shouldSendConnectMessage;
     private Consumer<Integer> onSensorCountRead;
-    private Consumer<SensorTypes[]> onSensorTypesRead;
-    private SensorTypes[] sensorTypes;
+    private Consumer<SensorType[]> onSensorTypesRead;
+    private SensorType[] sensorTypes;
     private int sensorCount;
     private Consumer<SensorLogData> onDataRead;
     private NoArgConsumer onLogFileOpen, onLogFileClosed;
@@ -123,7 +123,7 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
                             byte sensorType = (byte) bluetoothInputStream.read();
 
                             if (onSensorTypesRead != null && sensorCount > 0) {
-                                sensorTypes[sensorCount - 1] = SensorTypes.convert(sensorType);
+                                sensorTypes[sensorCount - 1] = SensorType.convert(sensorType);
                                 sensorCount--;
                                 if (sensorCount == 0) {
                                     onSensorTypesRead.accept(sensorTypes);
@@ -208,9 +208,9 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
     }
 
     @Override
-    public void readSensorTypes(int sensorCount, Consumer<SensorTypes[]> onSensorTypesRead) {
+    public void readSensorTypes(int sensorCount, Consumer<SensorType[]> onSensorTypesRead) {
         sendCommand(REQUEST_SENSOR_TYPES_STRING);
-        sensorTypes = new SensorTypes[sensorCount];
+        sensorTypes = new SensorType[sensorCount];
         this.sensorCount = sensorCount;
         this.onSensorTypesRead = onSensorTypesRead;
     }
