@@ -19,4 +19,12 @@ public class NodeModel implements Serializable {
         this.nodeName = nodeName;
         this.sensors = sensors;
     }
+
+    public void setSensors(List<SensorModel> sensors) {
+//        if (this.sensors == null || this.sensors.size() == 0) {
+//
+//            return;
+//        }
+        this.sensors = sensors;
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.retea_senzori_android.services;
+package com.example.retea_senzori_android.services.nodes;
 
 import com.example.retea_senzori_android.models.NodeModel;
 import com.example.retea_senzori_android.observables.Subject;

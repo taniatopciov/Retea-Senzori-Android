@@ -1,11 +1,11 @@
-package com.example.retea_senzori_android.services.impl;
+package com.example.retea_senzori_android.services.nodes.impl;
 
 import com.example.retea_senzori_android.models.NodeModel;
 import com.example.retea_senzori_android.models.ProfileModel;
 import com.example.retea_senzori_android.observables.Observer;
 import com.example.retea_senzori_android.observables.Subject;
 import com.example.retea_senzori_android.persistance.FirebaseRepository;
-import com.example.retea_senzori_android.services.NodeService;
+import com.example.retea_senzori_android.services.nodes.NodeService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
