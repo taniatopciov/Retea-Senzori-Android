@@ -12,6 +12,8 @@ import com.example.retea_senzori_android.persistance.FirebaseRepository;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.services.nodes.impl.NodeServiceImpl;
+import com.example.retea_senzori_android.utils.UIRunner;
+import com.example.retea_senzori_android.utils.UIRunnerImpl;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -74,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         authenticationService = new FirebaseAuthenticationService(profileModelFirebaseRepository);
 
         serviceLocator.register(AuthenticationService.class, authenticationService);
+        serviceLocator.register(UIRunner.class, new UIRunnerImpl(this));
 
         NodeServiceImpl nodeService = new NodeServiceImpl(profileModelFirebaseRepository);
         serviceLocator.register(NodeService.class, nodeService);
