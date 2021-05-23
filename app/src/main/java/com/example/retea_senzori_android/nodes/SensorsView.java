@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.example.retea_senzori_android.databinding.NodeDetailsFragmentBinding;
 import com.example.retea_senzori_android.models.SensorModel;
+import com.example.retea_senzori_android.sensor.SensorType;
 
 import java.util.ArrayList;
 
@@ -25,17 +26,12 @@ public class SensorsView extends Fragment {
 
         binding = NodeDetailsFragmentBinding.inflate(inflater, container, false);
         sensorArray = new ArrayList<>();
-        sensorArray.add(new SensorModel("gaz"));
-        sensorArray.add(new SensorModel("rain"));
-        binding.idRVSensor.setAdapter(new SensorAdapter(getContext(), sensorArray));
+        sensorArray.add(new SensorModel(SensorType.GAS_SENSOR));
+        sensorArray.add(new SensorModel(SensorType.RAIN_SENSOR));
+        binding.idRVSensor.setAdapter(new SensorAdapter());
         binding.idRVSensor.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

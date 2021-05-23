@@ -60,7 +60,7 @@ public class BluetoothManagerFragment extends Fragment implements Consumer<Bluet
 
         binding.getPairedDevicesButton.setOnClickListener(view -> {
             System.out.println("show paired devices");
-            PairedBluetoothDevicesDialogFragment pairedBluetoothDevicesDialogFragment = PairedBluetoothDevicesDialogFragment.newInstance(this::accept);
+            PairedBluetoothDevicesDialogFragment pairedBluetoothDevicesDialogFragment = PairedBluetoothDevicesDialogFragment.newInstance(this);
             pairedBluetoothDevicesDialogFragment.setTargetFragment(this, PAIRED_BT_DEVICES_REQUEST_CODE);
             pairedBluetoothDevicesDialogFragment.show(getParentFragmentManager(), "paired_bt_devices_fragment");
         });

@@ -1,13 +1,15 @@
-package com.example.retea_senzori_android.services.impl;
+package com.example.retea_senzori_android.services.nodes.impl;
 
 import com.example.retea_senzori_android.models.NodeModel;
 import com.example.retea_senzori_android.models.ProfileModel;
 import com.example.retea_senzori_android.observables.Observer;
 import com.example.retea_senzori_android.observables.Subject;
 import com.example.retea_senzori_android.persistance.FirebaseRepository;
-import com.example.retea_senzori_android.services.NodeService;
+import com.example.retea_senzori_android.services.nodes.NodeService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
@@ -15,6 +17,7 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
     private static final String USER_DATA_COLLECTION_PATH = "users";
 
     private ProfileModel currentProfileModel;
+    private Subject<List<NodeModel>> nodesSubject = new Subject<>();
 
     private final FirebaseRepository<ProfileModel> profileModelFirebaseRepository;
 
@@ -28,6 +31,9 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
         if (currentProfileModel == null) {
             subject.setState(false);
         } else {
+            if (currentProfileModel.nodes == null) {
+                currentProfileModel.nodes = new ArrayList<>();
+            }
             currentProfileModel.nodes.add(nodeModel);
             updateData(subject);
         }
@@ -43,15 +49,19 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
     }
 
     @Override
-    public Subject<Boolean> updateNode(String bluetoothDeviceName, NodeModel nodeModel) {
+    public Subject<Boolean> updateNode(NodeModel nodeModel) {
         Subject<Boolean> subject = new Subject<>();
         if (currentProfileModel == null) {
             subject.setState(false);
         } else {
             boolean nodeFound = false;
 
+            if (currentProfileModel.nodes == null) {
+                currentProfileModel.nodes = new ArrayList<>();
+            }
+
             for (NodeModel node : currentProfileModel.nodes) {
-                if (node.connectedBluetoothDevice.equals(bluetoothDeviceName)) {
+                if (node.connectedBluetoothDevice.equals(nodeModel.connectedBluetoothDevice)) {
                     nodeFound = true;
                     node.nodeName = nodeModel.nodeName;
                     node.lastUpdate = nodeModel.lastUpdate;
@@ -69,7 +79,28 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
     }
 
     @Override
+    public Subject<List<NodeModel>> getAllNodes() {
+        return nodesSubject;
+    }
+
+    @Override
+    public NodeModel findNodeByDeviceName(String bluetoothDeviceName) {
+        if (currentProfileModel == null || currentProfileModel.nodes == null) {
+            return null;
+        }
+        return currentProfileModel.nodes.stream()
+                .filter(nodeModel -> nodeModel.connectedBluetoothDevice.equals(bluetoothDeviceName))
+                .findFirst().orElse(null);
+    }
+
+    @Override
     public void observe(ProfileModel value) {
         currentProfileModel = value;
+
+        if (currentProfileModel == null || currentProfileModel.nodes == null) {
+            nodesSubject.setState(new ArrayList<>());
+        } else {
+            nodesSubject.setState(currentProfileModel.nodes);
+        }
     }
 }

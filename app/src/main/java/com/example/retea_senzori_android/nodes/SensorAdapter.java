@@ -1,6 +1,5 @@
 package com.example.retea_senzori_android.nodes;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,36 +9,29 @@ import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.models.SensorModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder> {
 
-    private final Context context;
-    private final ArrayList<SensorModel> sensorArrayList;
+    private List<SensorModel> sensorArrayList = new ArrayList<>();
 
-    public SensorAdapter(Context context, ArrayList<SensorModel> sensorArrayList) {
-        this.context = context;
-        this.sensorArrayList = sensorArrayList;
+    public SensorAdapter() {
     }
 
     @NonNull
     @Override
     public SensorAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.sensor_card_fragment, parent, false);
-        return new SensorAdapter.Viewholder(view);
+        return new Viewholder(view);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         SensorModel model = sensorArrayList.get(position);
-        holder.sensorName.setText(model.sensorType);
-//        holder.viewDetailsButton.setOnClickListener(view -> {
-//            Navigation.findNavController(view).navigate(NodesViewDirections.actionNodesViewToNodeDetailsFragment(model));
-//        });
+        holder.sensorName.setText(model.sensorType.toString());
     }
 
     @Override
@@ -47,7 +39,15 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
         return sensorArrayList.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder {
+    public void setSensors(List<SensorModel> sensors) {
+        this.sensorArrayList = sensors;
+        if (sensors == null) {
+            this.sensorArrayList = new ArrayList<>();
+        }
+        notifyDataSetChanged();
+    }
+
+    public static class Viewholder extends RecyclerView.ViewHolder {
         private final TextView sensorName;
 
         public Viewholder(@NonNull View itemView) {
