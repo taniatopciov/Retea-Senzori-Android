@@ -38,12 +38,11 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
         Sensor model = sensorArrayList.get(position);
         holder.sensorName.setText(model.getSensorModel().toString());
         holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model.getSensorModel())));
-
         model.subscribe(value -> {
             uiRunner.run(() -> {
                 holder.sensorLiveValue.setText(String.valueOf(value));
             });
-        });
+        });        
     }
 
     @Override
@@ -65,8 +64,8 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
         public Viewholder(@NonNull View itemView) {
             super(itemView);
-            sensorName = itemView.findViewById(R.id.sensorName);
             sensorLiveValue = itemView.findViewById(R.id.sensorDataValue);
+            sensorName = itemView.findViewById(R.id.sensorType);
         }
     }
 }
