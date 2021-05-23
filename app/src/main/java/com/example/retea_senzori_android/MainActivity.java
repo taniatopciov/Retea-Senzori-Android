@@ -8,12 +8,15 @@ import com.example.retea_senzori_android.authentication.service.AuthenticationSe
 import com.example.retea_senzori_android.authentication.service.FirebaseAuthenticationService;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.ProfileModel;
+import com.example.retea_senzori_android.models.SensorLogFile;
 import com.example.retea_senzori_android.persistance.FirebaseRepository;
 import com.example.retea_senzori_android.persistance.impl.FirebaseRepositoryImpl;
+import com.example.retea_senzori_android.services.logs.LogsService;
+import com.example.retea_senzori_android.services.logs.impl.LogsServiceImpl;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.services.nodes.impl.NodeServiceImpl;
-import com.example.retea_senzori_android.utils.UIRunner;
-import com.example.retea_senzori_android.utils.UIRunnerImpl;
+import com.example.retea_senzori_android.utils.runners.UIRunner;
+import com.example.retea_senzori_android.utils.runners.UIRunnerImpl;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -46,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -80,6 +83,11 @@ public class MainActivity extends AppCompatActivity {
 
         NodeServiceImpl nodeService = new NodeServiceImpl(profileModelFirebaseRepository);
         serviceLocator.register(NodeService.class, nodeService);
+
+        FirebaseRepository<SensorLogFile> logsFirebaseRepository = new FirebaseRepositoryImpl<>();
+
+        LogsServiceImpl logsService = new LogsServiceImpl(logsFirebaseRepository);
+        serviceLocator.register(LogsService.class, logsService);
 
         authenticationService.getLoggedUserData().subscribe(nodeService);
     }

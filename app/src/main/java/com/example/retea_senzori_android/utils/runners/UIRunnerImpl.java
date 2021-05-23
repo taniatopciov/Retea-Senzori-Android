@@ -1,4 +1,4 @@
-package com.example.retea_senzori_android.utils;
+package com.example.retea_senzori_android.utils.runners;
 
 import android.app.Activity;
 
