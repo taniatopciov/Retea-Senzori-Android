@@ -83,6 +83,9 @@
         <action
             android:id="@+id/navigateToSensorFragment"
             app:destination="@id/sensorFragment" />
+        <action
+            android:id="@+id/navigateToAllData"
+            app:destination="@id/nodeAllDataFragment" />
     </fragment>
     <fragment
         android:id="@+id/sensorFragment"
@@ -92,5 +95,13 @@
         <argument
             android:name="sensorModel"
             app:argType="com.example.retea_senzori_android.models.SensorModel" />
+    </fragment>
+    <fragment
+        android:id="@+id/nodeAllDataFragment"
+        android:name="com.example.retea_senzori_android.nodes.NodeAllDataFragment"
+        android:label="NodeAllDataFragment" >
+        <argument
+            android:name="nodeModel"
+            app:argType="com.example.retea_senzori_android.models.NodeModel" />
     </fragment>
 </navigation>

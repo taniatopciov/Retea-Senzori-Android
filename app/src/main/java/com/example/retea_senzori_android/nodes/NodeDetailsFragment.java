@@ -9,6 +9,13 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocol;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocolSPPImpl;
@@ -19,6 +26,7 @@ import com.example.retea_senzori_android.models.NodeModel;
 import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
+import com.example.retea_senzori_android.nodes.renameNodePopup.RenameNodeDialogFragment;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.utils.runners.CyclicRunner;
 import com.example.retea_senzori_android.utils.runners.UIRunner;
@@ -29,12 +37,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 public class NodeDetailsFragment extends Fragment {
 
     @Injectable
@@ -44,6 +46,7 @@ public class NodeDetailsFragment extends Fragment {
     private UIRunner uiRunner;
 
     private static final int REQUEST_ENABLE_BT = 1;
+    private static final int RENAME_NODE_DIALOG_REQUEST_CODE = 100;
 
     private BluetoothNodeProtocol bluetoothNodeProtocol;
 
@@ -74,16 +77,31 @@ public class NodeDetailsFragment extends Fragment {
             bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
         });
         mViewModel.getNode().observe(getViewLifecycleOwner(), node -> {
-            binding.testId.setText(node.getNodeName());
+            binding.nodeNameNodePage.setText(node.getNodeName());
+            binding.bluetoothDeviceNodePage.setText(node.getConnectedBluetoothDevice());
             sensorAdapter.setSensors(node.getSensors());
         });
 
         binding.idRVSensor.setAdapter(sensorAdapter);
         binding.idRVSensor.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        binding.changeNodeNameButton.setOnClickListener(view -> {
+            RenameNodeDialogFragment renameNodeDialogFragment = RenameNodeDialogFragment.newInstance(binding.nodeNameNodePage.getText().toString(), newName -> {
+                nodeModel.nodeName = newName;
+                mViewModel.setName(newName);
+                nodeService.updateNode(nodeModel).subscribe(System.out::println);
+            });
+            renameNodeDialogFragment.setTargetFragment(this, RENAME_NODE_DIALOG_REQUEST_CODE);
+            renameNodeDialogFragment.show(getParentFragmentManager(), "rename_node_dialog");
+        });
+
+        binding.allDataButton.setOnClickListener(view -> {
+            Navigation.findNavController(view).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
+        });
+
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
-            Snackbar.make(binding.idRVSensor, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(binding.nodePageId, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
             return binding.getRoot();
         }
         // todo check if bluetooth is turned off
@@ -110,8 +128,10 @@ public class NodeDetailsFragment extends Fragment {
 
         binding.liveDataButton.setOnClickListener(view -> {
             if (cyclicRunner != null) {
+                binding.liveDataButton.setText("Live Data");
                 stopLiveDataRead();
             } else {
+                binding.liveDataButton.setText("Stop");
                 startLiveDataRead();
             }
         });
@@ -124,7 +144,6 @@ public class NodeDetailsFragment extends Fragment {
                 nodeService.updateNode(nodeModel).subscribe(System.out::println);
             });
         }));
-
         return binding.getRoot();
     }
 

@@ -44,8 +44,8 @@
     <string name="sensor_data_value">Unavailable</string>
 
     <string name="sensor_name">Sensor Name</string>
+    <string name="bluetooth_device_name">BlueTooth Device Name</string>
     <string name="time">Time</string>
     <string name="value">Value</string>
-
 
 </resources>

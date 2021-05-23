@@ -9,8 +9,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class NodeDetailsViewModel extends ViewModel {
-    private MutableLiveData<BluetoothDevice> bluetoothDevice = new MutableLiveData<>();
-    private MutableLiveData<Node> node = new MutableLiveData<>();
+    private final MutableLiveData<BluetoothDevice> bluetoothDevice = new MutableLiveData<>();
+    private final MutableLiveData<Node> node = new MutableLiveData<>();
 
     public void setBluetoothDevice(BluetoothDevice bluetoothDevice) {
         this.bluetoothDevice.postValue(bluetoothDevice);
@@ -33,6 +33,15 @@ public class NodeDetailsViewModel extends ViewModel {
         if (n != null) {
 
             n.setSensors(sensorTypes);
+            setNode(n);
+        }
+    }
+
+    public void setName(String newName) {
+        Node n = node.getValue();
+        if (n != null) {
+
+            n.setNodeName(newName);
             setNode(n);
         }
     }
