@@ -2,6 +2,8 @@ package com.example.retea_senzori_android.nodes;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.bluetooth.ui.PairedBluetoothDevicesDialogFragment;
 import com.example.retea_senzori_android.databinding.HomePageNodesFragmentBinding;
 import com.example.retea_senzori_android.di.Injectable;
@@ -84,5 +87,11 @@ public class HomePageNodesFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

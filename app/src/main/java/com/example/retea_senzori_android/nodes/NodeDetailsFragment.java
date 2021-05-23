@@ -4,9 +4,12 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocol;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocolSPPImpl;
 import com.example.retea_senzori_android.databinding.NodeDetailsFragmentBinding;
@@ -128,5 +131,11 @@ public class NodeDetailsFragment extends Fragment {
         binding = null;
         bluetoothNodeProtocol.disconnect();
         bluetoothNodeProtocol = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
