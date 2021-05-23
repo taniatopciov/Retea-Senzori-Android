@@ -60,29 +60,8 @@ public class NodeDetailsFragment extends Fragment {
         binding = NodeDetailsFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(NodeDetailsViewModel.class);
 
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (bluetoothAdapter == null) {
-            Snackbar.make(binding.idRVSensor, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
-            return binding.getRoot();
-        }
-        // todo check if bluetooth is turned off
-//        if (!bluetoothAdapter.isEnabled()) {
-//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//        } else {
-//        }
-
         NodeModel nodeModel = NodeDetailsFragmentArgs.fromBundle(getArguments()).getNodeModel();
         mViewModel.setNode(NodeFactory.fromModel(nodeModel));
-
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        Optional<BluetoothDevice> bluetoothDeviceOptional = pairedDevices.stream().filter(device -> device.getName().equals(nodeModel.connectedBluetoothDevice))
-                .findFirst();
-        if (!bluetoothDeviceOptional.isPresent()) {
-            Snackbar.make(binding.idRVSensor, "Bluetooth Device not found", Snackbar.LENGTH_LONG).show();
-            return binding.getRoot();
-        }
-        mViewModel.setBluetoothDevice(bluetoothDeviceOptional.get());
 
         SensorAdapter sensorAdapter = new SensorAdapter(uiRunner);
 
@@ -96,6 +75,28 @@ public class NodeDetailsFragment extends Fragment {
 
         binding.idRVSensor.setAdapter(sensorAdapter);
         binding.idRVSensor.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter == null) {
+            Snackbar.make(binding.idRVSensor, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
+            return binding.getRoot();
+        }
+        // todo check if bluetooth is turned off
+//        if (!bluetoothAdapter.isEnabled()) {
+//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//        } else {
+//        }
+
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        Optional<BluetoothDevice> bluetoothDeviceOptional = pairedDevices.stream().filter(device -> device.getName().equals(nodeModel.connectedBluetoothDevice))
+                .findFirst();
+        if (!bluetoothDeviceOptional.isPresent()) {
+            Snackbar.make(binding.idRVSensor, "Bluetooth Device not found", Snackbar.LENGTH_LONG).show();
+            return binding.getRoot();
+        }
+        mViewModel.setBluetoothDevice(bluetoothDeviceOptional.get());
+
 
         bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> {
             Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_LONG)
@@ -126,7 +127,9 @@ public class NodeDetailsFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-        bluetoothNodeProtocol.disconnect();
-        bluetoothNodeProtocol = null;
+        if (bluetoothNodeProtocol != null) {
+            bluetoothNodeProtocol.disconnect();
+            bluetoothNodeProtocol = null;
+        }
     }
 }
