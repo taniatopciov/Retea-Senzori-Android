@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.retea_senzori_android.R;
@@ -94,6 +95,10 @@ public class NodeDetailsFragment extends Fragment {
             renameNodeDialogFragment.show(getParentFragmentManager(), "rename_node_dialog");
         });
 
+        binding.allDataButton.setOnClickListener(view -> {
+            Navigation.findNavController(view).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
+        });
+
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {
             Snackbar.make(binding.nodePageId, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
@@ -123,8 +128,10 @@ public class NodeDetailsFragment extends Fragment {
 
         binding.liveDataButton.setOnClickListener(view -> {
             if (cyclicRunner != null) {
+                binding.liveDataButton.setText("Live Data");
                 stopLiveDataRead();
             } else {
+                binding.liveDataButton.setText("Stop");
                 startLiveDataRead();
             }
         });
