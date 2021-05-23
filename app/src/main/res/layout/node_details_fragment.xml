@@ -25,50 +25,49 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/idRVSensor"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_marginTop="100dp"
-            android:layout_marginBottom="100dp"
             android:textAlignment="center"
             android:textDirection="inherit"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/testId">
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <Button
-            android:id="@+id/liveDataButton"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginBottom="60dp"
-            android:text="@string/live_data"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idRVSensor" />
-
-        <Button
-            android:id="@+id/logDataButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="60dp"
-            android:text="@string/log_data"
+            android:orientation="horizontal"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idRVSensor" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <Button
-            android:id="@+id/allDataButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="18dp"
-            android:layout_marginBottom="60dp"
-            android:text="@string/all_data"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idRVSensor" />
+            <Button
+                android:id="@+id/liveDataButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/live_data" />
+
+            <Button
+                android:id="@+id/logDataButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/log_data" />
+
+
+            <Button
+                android:id="@+id/allDataButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:text="@string/all_data" />
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

@@ -6,18 +6,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.retea_senzori_android.R;
-import com.example.retea_senzori_android.authentication.login.LoginFragmentDirections;
 import com.example.retea_senzori_android.models.NodeModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
@@ -43,8 +39,8 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
             Navigation.findNavController(view).navigate(NodesViewDirections.actionNodesViewToNodeDetailsFragment(model));
         });
         if (model.sensors != null && model.sensors.size() > 2) {
-            holder.sensor1.setText(model.sensors.get(0).sensorType);
-            holder.sensor2.setText(model.sensors.get(1).sensorType);
+            holder.sensor1.setText(model.sensors.get(0).sensorType.toString());
+            holder.sensor2.setText(model.sensors.get(1).sensorType.toString());
         } else {
             holder.sensor1.setText("");
             holder.sensor2.setText("");
@@ -66,7 +62,7 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.Viewholder> {
         notifyDataSetChanged();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder {
+    public static class Viewholder extends RecyclerView.ViewHolder {
         private final TextView nodeName;
         private final TextView sensor1;
         private final TextView sensor2;

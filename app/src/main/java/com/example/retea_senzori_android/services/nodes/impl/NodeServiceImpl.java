@@ -49,7 +49,7 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
     }
 
     @Override
-    public Subject<Boolean> updateNode(String bluetoothDeviceName, NodeModel nodeModel) {
+    public Subject<Boolean> updateNode(NodeModel nodeModel) {
         Subject<Boolean> subject = new Subject<>();
         if (currentProfileModel == null) {
             subject.setState(false);
@@ -61,7 +61,7 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
             }
 
             for (NodeModel node : currentProfileModel.nodes) {
-                if (node.connectedBluetoothDevice.equals(bluetoothDeviceName)) {
+                if (node.connectedBluetoothDevice.equals(nodeModel.connectedBluetoothDevice)) {
                     nodeFound = true;
                     node.nodeName = nodeModel.nodeName;
                     node.lastUpdate = nodeModel.lastUpdate;

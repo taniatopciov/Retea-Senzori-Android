@@ -8,7 +8,7 @@ import java.util.List;
 public interface NodeService {
     Subject<Boolean> addNode(NodeModel nodeModel);
 
-    Subject<Boolean> updateNode(String bluetoothDeviceName, NodeModel nodeModel);
+    Subject<Boolean> updateNode(NodeModel nodeModel);
 
     Subject<List<NodeModel>> getAllNodes();
 

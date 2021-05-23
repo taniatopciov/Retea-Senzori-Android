@@ -10,7 +10,7 @@ import com.example.retea_senzori_android.databinding.NodesLayoutFragmentBinding;
 import com.example.retea_senzori_android.di.Injectable;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.NodeModel;
-import com.example.retea_senzori_android.services.NodeService;
+import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class NodesView extends Fragment {
@@ -37,10 +38,12 @@ public class NodesView extends Fragment {
                              @Nullable Bundle savedInstanceState) {
 
         binding = NodesLayoutFragmentBinding.inflate(inflater, container, false);
-
         NodeAdapter nodeAdapter = new NodeAdapter();
 
-        nodeService.getAllNodes().subscribe(nodeAdapter::addAllNodes);
+        NodesViewViewModel viewModel = new ViewModelProvider(requireActivity()).get(NodesViewViewModel.class);
+        viewModel.getNodeModels().observe(getViewLifecycleOwner(), nodeAdapter::addAllNodes);
+
+        nodeService.getAllNodes().subscribe(viewModel::setNodeModels);
 
         binding.addNodeFabButton.setOnClickListener(view -> {
             PairedBluetoothDevicesDialogFragment pairedBluetoothDevicesDialogFragment = PairedBluetoothDevicesDialogFragment.newInstance(device -> {
