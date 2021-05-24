@@ -89,6 +89,7 @@ public class NodeDetailsFragment extends Fragment {
         mViewModel.setNode(NodeFactory.fromModel(nodeModel));
 
         SensorAdapter sensorAdapter = new SensorAdapter(uiRunner);
+        sensorAdapter.setNodeLogId(nodeModel.logFileId);
 
         mViewModel.getBluetoothDevice().observe(getViewLifecycleOwner(), bluetoothDevice -> {
             if (!bluetoothDevice.getName().equals(nodeModel.connectedBluetoothDevice)) {
