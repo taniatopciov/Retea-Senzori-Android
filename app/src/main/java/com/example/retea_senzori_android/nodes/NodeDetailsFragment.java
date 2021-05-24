@@ -79,6 +79,9 @@ public class NodeDetailsFragment extends Fragment {
         SensorAdapter sensorAdapter = new SensorAdapter(uiRunner);
 
         mViewModel.getBluetoothDevice().observe(getViewLifecycleOwner(), bluetoothDevice -> {
+            if (!bluetoothDevice.getName().equals(nodeModel.connectedBluetoothDevice)) {
+                return;
+            }
             if (bluetoothNodeProtocol != null) {
                 bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
             }
