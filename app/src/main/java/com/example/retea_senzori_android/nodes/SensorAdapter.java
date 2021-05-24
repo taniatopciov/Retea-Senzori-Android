@@ -22,6 +22,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
     private List<Sensor> sensorArrayList = new ArrayList<>();
     private final UIRunner uiRunner;
+    private String nodeLogId = "";
 
     public SensorAdapter(UIRunner uiRunner) {
         this.uiRunner = uiRunner;
@@ -38,7 +39,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         Sensor sensor = sensorArrayList.get(position);
         holder.sensorName.setText(sensor.getSensorType().toString());
-        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(sensor.getSensorModel())));
+        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(sensor.getSensorModel(), nodeLogId)));
 
         SensorValueDisplayer sensorValueDisplayer = SensorFactory.getSensorValueMapper(sensor.getSensorType());
 
@@ -58,6 +59,10 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
             this.sensorArrayList = new ArrayList<>();
         }
         notifyDataSetChanged();
+    }
+
+    public void setNodeLogId(String nodeLogId) {
+        this.nodeLogId = nodeLogId;
     }
 
     public static class Viewholder extends RecyclerView.ViewHolder {

@@ -337,18 +337,4 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
             e.printStackTrace();
         }
     }
-
-//    private boolean matchByteArrayWithString(byte[] array, String string) {
-//        byte[] bytes = string.getBytes();
-//        if (array.length != bytes.length) {
-//            return false;
-//        }
-//
-//        for (int i = 0; i < bytes.length; i++) {
-//            if (bytes[i] != array[i]) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 }
