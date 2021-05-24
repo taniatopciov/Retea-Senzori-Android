@@ -18,6 +18,10 @@ import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.services.logs.LogsService;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -73,7 +77,11 @@ public class SensorFragment extends Fragment {
                     TextView text1 = new TextView(getContext());
                     TextView text2 = new TextView(getContext());
 
-                    text1.setText(String.valueOf(data.time));
+                    String pattern = "dd-MM-yyyy hh:mm:ss";
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+                    String date = simpleDateFormat.format(new Date(data.time * 1000));
+
+                    text1.setText(date);
                     text1.setGravity(Gravity.CENTER);
                     text2.setText(String.valueOf(data.value));
                     text2.setGravity(Gravity.CENTER);

@@ -18,12 +18,20 @@ import com.example.retea_senzori_android.models.NodeModel;
 import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.sensor.SensorType;
 import com.example.retea_senzori_android.services.logs.LogsService;
+import com.example.retea_senzori_android.services.nodes.NodeService;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class NodeAllDataFragment extends Fragment {
+
+    @Injectable
+    private NodeService nodeService;
 
     @Injectable
     private LogsService logsService;
@@ -54,6 +62,8 @@ public class NodeAllDataFragment extends Fragment {
             return binding.getRoot();
         }
 
+        nodeService.updateNode(nodeModel).subscribe(System.out::println);
+
         logsService.getLogFromId(nodeModel.logFileId).subscribe(sensorLogFile -> {
             if (sensorLogFile == null) {
                 System.out.println("No logs");
@@ -73,7 +83,11 @@ public class NodeAllDataFragment extends Fragment {
                     TextView sensorTypeTextView = new TextView(getContext());
                     TextView valueTextView = new TextView(getContext());
 
-                    timeTextView.setText(String.valueOf(data.time));
+                    String pattern = "dd-MM-yyyy hh:mm:ss";
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.getDefault());
+                    String date = simpleDateFormat.format(new Date(data.time * 1000));
+
+                    timeTextView.setText(date);
                     timeTextView.setGravity(Gravity.CENTER);
 
                     sensorTypeTextView.setText(data.sensorType.toString());
