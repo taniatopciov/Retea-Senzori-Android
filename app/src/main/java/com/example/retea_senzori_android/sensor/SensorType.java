@@ -34,9 +34,9 @@ public enum SensorType {
     public String toString() {
         String value = super.toString();
 
-        if (value.contains("TEMP")) {
-            value = value.replace("TEMP", "TEMPERATURE");
-        }
+//        if (value.contains("TEMP")) {
+//            value = value.replace("TEMP", "TEMPERATURE");
+//        }
 
         return value.replace("_", " ");
     }
