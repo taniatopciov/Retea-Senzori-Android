@@ -9,7 +9,7 @@ public class NodeModel implements Serializable {
     public String nodeName;
     public String connectedBluetoothDevice;
     public String lastUpdate;
-    public List<SensorModel> sensors;
+    public List<SensorModel> sensors = new ArrayList<>();
     public String logFileId;
 
     public NodeModel() {

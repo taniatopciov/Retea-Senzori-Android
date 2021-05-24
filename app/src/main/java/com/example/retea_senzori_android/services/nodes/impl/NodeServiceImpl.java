@@ -66,6 +66,7 @@ public class NodeServiceImpl implements NodeService, Observer<ProfileModel> {
                     node.nodeName = nodeModel.nodeName;
                     node.lastUpdate = nodeModel.lastUpdate;
                     node.sensors = nodeModel.sensors;
+                    node.logFileId = nodeModel.logFileId;
                     break;
                 }
             }

@@ -39,7 +39,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         Sensor sensor = sensorArrayList.get(position);
         holder.sensorName.setText(sensor.getSensorType().toString());
-        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(sensor.getSensorModel(), nodeLogId)));
+        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(sensor.getSensorModel(), nodeLogId == null ? "" : nodeLogId)));
 
         SensorValueDisplayer sensorValueDisplayer = SensorFactory.getSensorValueMapper(sensor.getSensorType());
 
