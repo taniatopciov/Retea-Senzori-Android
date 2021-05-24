@@ -266,6 +266,7 @@ public class NodeDetailsFragment extends Fragment {
             bluetoothNodeProtocol.readLiveData(sensorLogData -> {
                 Node node = mViewModel.getNode().getValue();
                 if (node != null) {
+                    System.out.println(sensorLogData.value);
                     node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
                 }
             });
