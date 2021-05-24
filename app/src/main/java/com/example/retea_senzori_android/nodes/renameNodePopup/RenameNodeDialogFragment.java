@@ -20,10 +20,6 @@ public class RenameNodeDialogFragment extends DialogFragment {
     private Consumer<String> onRenameButtonClickConsumer;
     private String nodeName;
 
-    public RenameNodeDialogFragment() {
-        ServiceLocator.getInstance().inject(this);
-    }
-
     public static RenameNodeDialogFragment newInstance(String nodeName, Consumer<String> onRenameButtonClick) {
         RenameNodeDialogFragment renameNodeDialogFragment = new RenameNodeDialogFragment();
         renameNodeDialogFragment.onRenameButtonClickConsumer = onRenameButtonClick;

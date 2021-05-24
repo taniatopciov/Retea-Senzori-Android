@@ -11,5 +11,5 @@ public interface LogsService {
 
     Subject<SensorModel> updateSensorModelId(SensorModel sensorModel, SensorLogFile sensorLogFile);
 
-    Subject<SensorModel> addLog(SensorModel sensorModel, SensorLogFile sensorLogFile);
+    Subject<String> addLog(String sensorLogFileId, SensorLogFile sensorLogFile);
 }
