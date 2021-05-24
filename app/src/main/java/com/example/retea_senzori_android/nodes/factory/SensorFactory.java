@@ -18,12 +18,16 @@ public class SensorFactory {
         switch (sensorType) {
 
             case RAIN_SENSOR:
+                sensorValueDisplayer = new IdentityDisplayer();
                 break;
             case GAS_SENSOR:
+                sensorValueDisplayer = new GasDisplayer();
                 break;
             case SOIL_MOISTURE_SENSOR:
+                sensorValueDisplayer = new SoilMoistureDisplayer();
                 break;
             case LIGHT_SENSOR:
+                sensorValueDisplayer = new LuminosityDisplayer();
                 break;
             case TEMP_SENSOR:
                 break;
