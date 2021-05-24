@@ -1,6 +1,7 @@
 package com.example.retea_senzori_android.nodes.factory;
 
 import com.example.retea_senzori_android.models.NodeModel;
+import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.sensor.SensorType;
 
 import java.util.ArrayList;

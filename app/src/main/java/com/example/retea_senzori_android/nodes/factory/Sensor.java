@@ -6,24 +6,13 @@ import com.example.retea_senzori_android.sensor.SensorType;
 
 public class Sensor extends Subject<Float> {
     private final SensorModel sensorModel;
-    private final SensorValueMapper sensorValueMapper;
 
-    public Sensor(SensorModel sensorModel, SensorValueMapper sensorValueMapper) {
+    public Sensor(SensorModel sensorModel) {
         this.sensorModel = sensorModel;
-        this.sensorValueMapper = sensorValueMapper;
-    }
-
-    @Override
-    public void setState(Float state) {
-        super.setState(sensorValueMapper.format(state));
     }
 
     public SensorModel getSensorModel() {
         return sensorModel;
-    }
-
-    public SensorValueMapper getSensorValueMapper() {
-        return sensorValueMapper;
     }
 
     public SensorType getSensorType() {

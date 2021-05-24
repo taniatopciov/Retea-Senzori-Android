@@ -7,6 +7,8 @@ import android.widget.TextView;
 
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.nodes.factory.Sensor;
+import com.example.retea_senzori_android.nodes.factory.SensorFactory;
+import com.example.retea_senzori_android.nodes.factory.SensorValueDisplayer;
 import com.example.retea_senzori_android.utils.runners.UIRunner;
 
 import java.util.ArrayList;
@@ -34,12 +36,15 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
 
     @Override
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
-        Sensor model = sensorArrayList.get(position);
-        holder.sensorName.setText(model.getSensorType().toString());
-        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model.getSensorModel())));
-        model.subscribe(value ->
+        Sensor sensor = sensorArrayList.get(position);
+        holder.sensorName.setText(sensor.getSensorType().toString());
+        holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(sensor.getSensorModel())));
+
+        SensorValueDisplayer sensorValueDisplayer = SensorFactory.getSensorValueMapper(sensor.getSensorType());
+
+        sensor.subscribe(value ->
                 uiRunner.run(() ->
-                        holder.sensorLiveValue.setText(String.valueOf(value))));
+                        holder.sensorLiveValue.setText(sensorValueDisplayer.display(value))));
     }
 
     @Override

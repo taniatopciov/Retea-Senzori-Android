@@ -5,16 +5,15 @@ import com.example.retea_senzori_android.sensor.SensorType;
 
 public class SensorFactory {
     public static Sensor fromModel(SensorModel sensorModel) {
-        return new Sensor(sensorModel, getSensorValueMapper(sensorModel.sensorType));
+        return new Sensor(sensorModel);
     }
 
     public static Sensor fromType(SensorType sensorType) {
-        SensorModel sensorModel = new SensorModel(sensorType);
-        return new Sensor(sensorModel, getSensorValueMapper(sensorType));
+        return new Sensor(new SensorModel(sensorType));
     }
 
-    private static SensorValueMapper getSensorValueMapper(SensorType sensorType) {
-        SensorValueMapper sensorValueMapper = new IdentityMapper();
+    public static SensorValueDisplayer getSensorValueMapper(SensorType sensorType) {
+        SensorValueDisplayer sensorValueDisplayer = new IdentityDisplayer();
 
         switch (sensorType) {
 
@@ -32,9 +31,9 @@ public class SensorFactory {
                 break;
             case NO_TYPE:
             default:
-                sensorValueMapper = new IdentityMapper();
+                sensorValueDisplayer = new IdentityDisplayer();
                 break;
         }
-        return sensorValueMapper;
+        return sensorValueDisplayer;
     }
 }

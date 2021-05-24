@@ -15,6 +15,8 @@ import com.example.retea_senzori_android.databinding.SensorFragmentBinding;
 import com.example.retea_senzori_android.di.Injectable;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.SensorModel;
+import com.example.retea_senzori_android.nodes.factory.SensorFactory;
+import com.example.retea_senzori_android.nodes.factory.SensorValueDisplayer;
 import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.services.logs.LogsService;
 
@@ -49,6 +51,8 @@ public class SensorFragment extends Fragment {
         mViewModel = new ViewModelProvider(requireActivity()).get(SensorViewModel.class);
 
         SensorModel sensorModel = SensorFragmentArgs.fromBundle(getArguments()).getSensorModel();
+        SensorValueDisplayer sensorValueDisplayer = SensorFactory.getSensorValueMapper(sensorModel.sensorType);
+
         logsService.getLogFromId(sensorModel.logFileId).subscribe(sensorLogFile -> {
             if (sensorLogFile == null) {
                 System.out.println("No logs");
@@ -66,7 +70,7 @@ public class SensorFragment extends Fragment {
 
                     text1.setText(String.valueOf(data.time));
                     text1.setGravity(Gravity.CENTER);
-                    text2.setText(String.valueOf(data.value));
+                    text2.setText(sensorValueDisplayer.display(data.value));
                     text2.setGravity(Gravity.CENTER);
 
                     tr.addView(text1);

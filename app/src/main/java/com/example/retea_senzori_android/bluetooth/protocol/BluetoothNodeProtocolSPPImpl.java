@@ -279,6 +279,7 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
     @Override
     public void setUnixTime() {
         long unixTime = System.currentTimeMillis() / 1000L;
+        System.out.println(unixTime);
         ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
         buffer.putLong(unixTime);
         sendCommand(SET_UNIX_TIME_STRING, buffer.array());

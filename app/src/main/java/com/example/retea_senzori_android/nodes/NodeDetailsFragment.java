@@ -122,7 +122,7 @@ public class NodeDetailsFragment extends Fragment {
                         return;
                     }
 
-                    NodeLogCreator nodeLogCreator = new NodeLogCreator(node.getSensors());
+                    NodeLogCreator nodeLogCreator = new NodeLogCreator();
 
                     for (int i = 0; i < sensorDataLogFiles.size(); i++) {
                         nodeLogCreator.startLog();
