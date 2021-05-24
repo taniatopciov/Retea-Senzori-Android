@@ -7,6 +7,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
+import java.util.ArrayList;
+
 
 public class FirebaseAuthenticationService implements AuthenticationService {
     private static final String USER_DATA_COLLECTION_PATH = "users";
@@ -105,6 +107,7 @@ public class FirebaseAuthenticationService implements AuthenticationService {
                         profile.id = currentUser.getUid();
                         profile.email = currentUser.getEmail();
                         profile.username = username;
+                        profile.nodes = new ArrayList<>();
 
                         profileModelSubject.setState(profile);
 
