@@ -1,7 +1,6 @@
 package com.example.retea_senzori_android.services.logs;
 
 import com.example.retea_senzori_android.models.SensorLogFile;
-import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.observables.Subject;
 
 public interface LogsService {
@@ -9,7 +8,5 @@ public interface LogsService {
 
     Subject<SensorLogFile> getLogFromId(String id);
 
-    Subject<SensorModel> updateSensorModelId(SensorModel sensorModel, SensorLogFile sensorLogFile);
-
-    Subject<String> addLog(String sensorLogFileId, SensorLogFile sensorLogFile);
+    Subject<String> addLog(String logFileId, SensorLogFile sensorLogFile);
 }

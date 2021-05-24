@@ -6,29 +6,6 @@
     app:startDestination="@id/nodesView">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.retea_senzori_android.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-        <action
-            android:id="@+id/action_FirstFragment_to_bluetoothManagerFragment"
-            app:destination="@id/bluetoothManagerFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.retea_senzori_android.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/bluetoothManagerFragment"
         android:name="com.example.retea_senzori_android.bluetooth.ui.BluetoothManagerFragment"
         android:label="fragment_bluetooth_manager"
@@ -65,14 +42,6 @@
             app:destination="@id/nodeDetailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/sensorsView"
-        android:name="com.example.retea_senzori_android.nodes.SensorsView"
-        android:label="SensorsView" >
-        <argument
-            android:name="sensorModel"
-            app:argType="com.example.retea_senzori_android.models.SensorModel" />
-    </fragment>
-    <fragment
         android:id="@+id/nodeDetailsFragment"
         android:name="com.example.retea_senzori_android.nodes.NodeDetailsFragment"
         android:label="node_details_fragment"
@@ -95,6 +64,9 @@
         <argument
             android:name="sensorModel"
             app:argType="com.example.retea_senzori_android.models.SensorModel" />
+        <argument
+            android:name="nodeLogId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/nodeAllDataFragment"

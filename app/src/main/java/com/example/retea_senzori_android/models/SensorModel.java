@@ -7,7 +7,6 @@ import java.io.Serializable;
 public class SensorModel implements Serializable {
 
     public SensorType sensorType;
-    public String logFileId;
 
     public SensorModel() {
 

@@ -3,7 +3,6 @@ package com.example.retea_senzori_android.nodes;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,7 +23,6 @@ import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
 import com.example.retea_senzori_android.nodes.factory.NodeLogCreator;
-import com.example.retea_senzori_android.nodes.factory.Sensor;
 import com.example.retea_senzori_android.nodes.readdata.ReadDataDialogFragment;
 import com.example.retea_senzori_android.nodes.renameNodePopup.RenameNodeDialogFragment;
 import com.example.retea_senzori_android.observables.Subject;
@@ -41,7 +39,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
@@ -127,18 +124,7 @@ public class NodeDetailsFragment extends Fragment {
             ReadDataDialogFragment readDataDialogFragment = ReadDataDialogFragment.newInstance(readDataDialogSubject);
             readDataDialogFragment.setTargetFragment(this, READ_DATA_DIALOG_REQUEST_CODE);
             readDataDialogFragment.show(getParentFragmentManager(), "read_data_dialog");
-            readDataDialogFragment.onDismiss(new DialogInterface() {
-                @Override
-                public void cancel() {
-
-                }
-
-                @Override
-                public void dismiss() {
-
-                    Navigation.findNavController(binding.linearLayout2).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
-                }
-            });
+            final boolean[] called = {false};
 
             if (bluetoothNodeProtocol != null) {
                 bluetoothNodeProtocol.readAllLogData(sensorDataLogFiles -> {
@@ -158,22 +144,21 @@ public class NodeDetailsFragment extends Fragment {
                         nodeLogCreator.endLog();
                     }
 
-                    AtomicInteger sensorUpdatedCount = new AtomicInteger();
                     SensorLogFile sensorLogFile = nodeLogCreator.getSensorLogFile();
 
-                    for (int i = 0; i < node.getSensors().size(); i++) {
-                        Sensor sensor = node.getSensors().get(i);
-                        logsService.addLog(sensor.getSensorModel().logFileId, sensorLogFile).subscribe(logFileId -> {
-                            sensor.getSensorModel().logFileId = logFileId;
+                    logsService.addLog(node.getNodeModel().logFileId, sensorLogFile).subscribe(logFileId -> {
+                        NodeModel model = node.getNodeModel();
+                        model.logFileId = logFileId;
+                        sensorAdapter.setNodeLogId(logFileId);
+                        nodeService.updateNode(model).subscribe(status -> {
+                            readDataDialogSubject.setState(null);
 
-                            nodeService.updateNode(node.getNodeModel()).subscribe(status -> {
-                                sensorUpdatedCount.getAndIncrement();
-                                if (sensorUpdatedCount.get() == node.getSensors().size()) {
-                                    readDataDialogSubject.setState(null);
-                                }
-                            });
+                            if (!called[0]) {
+                                called[0] = true;
+                                Navigation.findNavController(view).navigate(NodeDetailsFragmentDirections.navigateToAllData(model));
+                            }
                         });
-                    }
+                    });
                 });
             } else {
                 readDataDialogSubject.setState(null);
@@ -227,7 +212,7 @@ public class NodeDetailsFragment extends Fragment {
             bluetoothNodeProtocol.readSensorCount(count -> {
                 bluetoothNodeProtocol.readSensorTypes(count, sensorTypes -> {
                     mViewModel.setSensors(sensorTypes);
-                    nodeModel.setSensors(Arrays.stream(sensorTypes).map(SensorModel::new).collect(Collectors.toList()));
+                    nodeModel.sensors = Arrays.stream(sensorTypes).map(SensorModel::new).collect(Collectors.toList());
                     nodeService.updateNode(nodeModel).subscribe(System.out::println);
 
 //                    bluetoothNodeProtocol.setUnixTime();

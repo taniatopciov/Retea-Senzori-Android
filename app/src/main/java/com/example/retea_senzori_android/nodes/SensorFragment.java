@@ -26,8 +26,7 @@ import androidx.lifecycle.ViewModelProvider;
 public class SensorFragment extends Fragment {
 
     @Injectable
-    LogsService logsService;
-
+    private LogsService logsService;
 
     private SensorViewModel mViewModel;
 
@@ -48,8 +47,18 @@ public class SensorFragment extends Fragment {
         binding = SensorFragmentBinding.inflate(inflater, container, false);
         mViewModel = new ViewModelProvider(requireActivity()).get(SensorViewModel.class);
 
-        SensorModel sensorModel = SensorFragmentArgs.fromBundle(getArguments()).getSensorModel();
-        logsService.getLogFromId(sensorModel.logFileId).subscribe(sensorLogFile -> {
+        SensorFragmentArgs sensorFragmentArgs = SensorFragmentArgs.fromBundle(getArguments());
+        SensorModel sensorModel = sensorFragmentArgs.getSensorModel();
+        String logFileId = sensorFragmentArgs.getNodeLogId();
+
+        mViewModel.setSensorType(sensorModel.sensorType);
+        mViewModel.getSensorType().observe(getViewLifecycleOwner(), sensorType -> binding.sensorType.setText(sensorType.toString()));
+
+        if (logFileId.isEmpty()) {
+            return binding.getRoot();
+        }
+
+        logsService.getLogFromId(logFileId).subscribe(sensorLogFile -> {
             if (sensorLogFile == null) {
                 System.out.println("No logs");
                 return;
@@ -75,15 +84,8 @@ public class SensorFragment extends Fragment {
                 }
             });
         });
-        mViewModel.setSensorType(sensorModel.sensorType);
-        mViewModel.getSensorType().observe(getViewLifecycleOwner(), sensorType -> binding.sensorType.setText(sensorType.toString()));
 
         return binding.getRoot();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override

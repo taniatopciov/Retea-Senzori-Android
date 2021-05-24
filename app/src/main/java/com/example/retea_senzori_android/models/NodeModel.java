@@ -10,6 +10,7 @@ public class NodeModel implements Serializable {
     public String connectedBluetoothDevice;
     public String lastUpdate;
     public List<SensorModel> sensors;
+    public String logFileId;
 
     public NodeModel() {
 
@@ -17,14 +18,6 @@ public class NodeModel implements Serializable {
 
     public NodeModel(String nodeName, ArrayList<SensorModel> sensors) {
         this.nodeName = nodeName;
-        this.sensors = sensors;
-    }
-
-    public void setSensors(List<SensorModel> sensors) {
-//        if (this.sensors == null || this.sensors.size() == 0) {
-//
-//            return;
-//        }
         this.sensors = sensors;
     }
 }
