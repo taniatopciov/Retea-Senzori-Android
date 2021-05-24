@@ -44,17 +44,14 @@ public class LogsServiceImpl implements LogsService {
     }
 
     @Override
-    public Subject<SensorModel> addLog(SensorModel sensorModel, SensorLogFile sensorLogFile) {
-        Subject<SensorModel> subject = new Subject<>();
+    public Subject<String> addLog(String sensorLogFileId, SensorLogFile sensorLogFile) {
+        Subject<String> subject = new Subject<>();
 
-        if (sensorModel.logFileId == null) {
-            this.addLog(sensorLogFile).subscribe(id -> {
-                sensorModel.logFileId = id;
-                subject.setState(sensorModel);
-            });
+        if (sensorLogFileId == null) {
+            this.addLog(sensorLogFile).subscribe(subject::setState);
         } else {
-            this.sensorLogFirebaseRepository.setDocument(LOGS_DATA_COLLECTION_PATH, sensorModel.logFileId, sensorLogFile).subscribe(success -> {
-                subject.setState(sensorModel);
+            this.sensorLogFirebaseRepository.setDocument(LOGS_DATA_COLLECTION_PATH, sensorLogFileId, sensorLogFile).subscribe(success -> {
+                subject.setState(sensorLogFileId);
             });
         }
 

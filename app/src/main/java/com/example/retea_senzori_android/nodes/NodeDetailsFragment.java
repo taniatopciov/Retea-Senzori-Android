@@ -3,6 +3,7 @@ package com.example.retea_senzori_android.nodes;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,7 +25,9 @@ import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
 import com.example.retea_senzori_android.nodes.factory.NodeLogCreator;
 import com.example.retea_senzori_android.nodes.factory.Sensor;
+import com.example.retea_senzori_android.nodes.readdata.ReadDataDialogFragment;
 import com.example.retea_senzori_android.nodes.renameNodePopup.RenameNodeDialogFragment;
+import com.example.retea_senzori_android.observables.Subject;
 import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.services.logs.LogsService;
 import com.example.retea_senzori_android.services.nodes.NodeService;
@@ -38,12 +41,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class NodeDetailsFragment extends Fragment {
@@ -61,6 +66,7 @@ public class NodeDetailsFragment extends Fragment {
     private LogsService logsService;
 
     private static final int RENAME_NODE_DIALOG_REQUEST_CODE = 100;
+    private static final int READ_DATA_DIALOG_REQUEST_CODE = 110;
 
     private BluetoothNodeProtocol bluetoothNodeProtocol;
 
@@ -115,6 +121,25 @@ public class NodeDetailsFragment extends Fragment {
         });
 
         binding.allDataButton.setOnClickListener(view -> {
+
+            Subject<Void> readDataDialogSubject = new Subject<>();
+
+            ReadDataDialogFragment readDataDialogFragment = ReadDataDialogFragment.newInstance(readDataDialogSubject);
+            readDataDialogFragment.setTargetFragment(this, READ_DATA_DIALOG_REQUEST_CODE);
+            readDataDialogFragment.show(getParentFragmentManager(), "read_data_dialog");
+            readDataDialogFragment.onDismiss(new DialogInterface() {
+                @Override
+                public void cancel() {
+
+                }
+
+                @Override
+                public void dismiss() {
+
+                    Navigation.findNavController(binding.linearLayout2).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
+                }
+            });
+
             if (bluetoothNodeProtocol != null) {
                 bluetoothNodeProtocol.readAllLogData(sensorDataLogFiles -> {
                     Node node = mViewModel.getNode().getValue();
@@ -133,19 +158,26 @@ public class NodeDetailsFragment extends Fragment {
                         nodeLogCreator.endLog();
                     }
 
+                    AtomicInteger sensorUpdatedCount = new AtomicInteger();
                     SensorLogFile sensorLogFile = nodeLogCreator.getSensorLogFile();
+
                     for (int i = 0; i < node.getSensors().size(); i++) {
                         Sensor sensor = node.getSensors().get(i);
-                        logsService.addLog(sensor.getSensorModel(), sensorLogFile).subscribe(value -> {
-                            sensor.getSensorModel().logFileId = value.logFileId;
+                        logsService.addLog(sensor.getSensorModel().logFileId, sensorLogFile).subscribe(logFileId -> {
+                            sensor.getSensorModel().logFileId = logFileId;
 
-                            nodeService.updateNode(node.getNodeModel());
+                            nodeService.updateNode(node.getNodeModel()).subscribe(status -> {
+                                sensorUpdatedCount.getAndIncrement();
+                                if (sensorUpdatedCount.get() == node.getSensors().size()) {
+                                    readDataDialogSubject.setState(null);
+                                }
+                            });
                         });
                     }
-
                 });
+            } else {
+                readDataDialogSubject.setState(null);
             }
-//            Navigation.findNavController(view).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
         });
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -198,14 +230,16 @@ public class NodeDetailsFragment extends Fragment {
                     nodeModel.setSensors(Arrays.stream(sensorTypes).map(SensorModel::new).collect(Collectors.toList()));
                     nodeService.updateNode(nodeModel).subscribe(System.out::println);
 
-                    bluetoothNodeProtocol.readCurrentLogData().subscribe(sensorDataLogFile -> {
-                        for (int i = 0; i < sensorDataLogFile.getLogData().size(); i++) {
-                            SensorLogData sensorLogData = sensorDataLogFile.getLogData().get(i);
-                            System.out.println(sensorLogData);
-                        }
+//                    bluetoothNodeProtocol.setUnixTime();
 
-                        bluetoothNodeProtocol.setUnixTime();
-                    });
+//                    bluetoothNodeProtocol.readCurrentLogData().subscribe(sensorDataLogFile -> {
+//                        for (int i = 0; i < sensorDataLogFile.getLogData().size(); i++) {
+//                            SensorLogData sensorLogData = sensorDataLogFile.getLogData().get(i);
+//                            System.out.println(sensorLogData);
+//                        }
+//
+//                        bluetoothNodeProtocol.setUnixTime();
+//                    });
                 });
             });
         });

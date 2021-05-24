@@ -48,5 +48,6 @@
     <string name="time">Time</string>
     <string name="value">Value</string>
     <string name="stop">Stop</string>
+    <string name="reading_all_data">Reading All Data</string>
 
 </resources>
