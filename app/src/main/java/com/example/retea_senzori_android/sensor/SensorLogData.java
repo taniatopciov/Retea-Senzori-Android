@@ -9,7 +9,7 @@ public class SensorLogData {
     public final SensorType sensorType;
     public final int batchIndex; // should be short, but firebase does not support it
     public float value;
-    public final long time;
+    public long time;
 
     public SensorLogData() {
         logType = LogType.LOG_STARTED;
