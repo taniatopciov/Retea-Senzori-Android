@@ -15,6 +15,8 @@ import com.example.retea_senzori_android.services.logs.LogsService;
 import com.example.retea_senzori_android.services.logs.impl.LogsServiceImpl;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.services.nodes.impl.NodeServiceImpl;
+import com.example.retea_senzori_android.utils.activity.ActivityForResultLauncher;
+import com.example.retea_senzori_android.utils.activity.ActivityForResultLauncherImpl;
 import com.example.retea_senzori_android.utils.runners.UIRunner;
 import com.example.retea_senzori_android.utils.runners.UIRunnerImpl;
 
@@ -90,5 +92,8 @@ public class MainActivity extends AppCompatActivity {
         serviceLocator.register(LogsService.class, logsService);
 
         authenticationService.getLoggedUserData().subscribe(nodeService);
+
+        ActivityForResultLauncher activityForResultLauncher = new ActivityForResultLauncherImpl(this);
+        serviceLocator.register(ActivityForResultLauncher.class, activityForResultLauncher);
     }
 }

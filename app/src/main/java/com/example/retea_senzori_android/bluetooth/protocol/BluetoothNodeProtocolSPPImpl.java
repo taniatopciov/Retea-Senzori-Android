@@ -82,8 +82,13 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
                     bluetoothSocket.connect();
                     onConnectedDeviceListener.accept(device.getName());
                 } catch (IOException e) {
-                    System.out.println("Already connected to " + device.getName());
-                    onConnectedDeviceListener.accept(device.getName());
+                    if (bluetoothSocket.isConnected()) {
+                        System.out.println("Already connected to " + device.getName());
+                        onConnectedDeviceListener.accept(device.getName());
+                    } else {
+                        System.out.println("Couldn't connect to " + device.getName());
+                        onConnectedDeviceListener.accept(null);
+                    }
                 }
 
                 bluetoothInputStream = bluetoothSocket.getInputStream();

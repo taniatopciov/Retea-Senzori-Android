@@ -1,20 +1,15 @@
 package com.example.retea_senzori_android.nodes;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.bluetooth.protocol.BluetoothNodeProtocol;
@@ -28,6 +23,7 @@ import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
 import com.example.retea_senzori_android.nodes.renameNodePopup.RenameNodeDialogFragment;
 import com.example.retea_senzori_android.services.nodes.NodeService;
+import com.example.retea_senzori_android.utils.activity.ActivityForResultLauncher;
 import com.example.retea_senzori_android.utils.runners.CyclicRunner;
 import com.example.retea_senzori_android.utils.runners.UIRunner;
 import com.google.android.material.snackbar.Snackbar;
@@ -37,6 +33,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 public class NodeDetailsFragment extends Fragment {
 
     @Injectable
@@ -45,7 +48,9 @@ public class NodeDetailsFragment extends Fragment {
     @Injectable
     private UIRunner uiRunner;
 
-    private static final int REQUEST_ENABLE_BT = 1;
+    @Injectable
+    private ActivityForResultLauncher activityForResultLauncher;
+
     private static final int RENAME_NODE_DIALOG_REQUEST_CODE = 100;
 
     private BluetoothNodeProtocol bluetoothNodeProtocol;
@@ -74,7 +79,9 @@ public class NodeDetailsFragment extends Fragment {
         SensorAdapter sensorAdapter = new SensorAdapter(uiRunner);
 
         mViewModel.getBluetoothDevice().observe(getViewLifecycleOwner(), bluetoothDevice -> {
-            bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
+            if (bluetoothNodeProtocol != null) {
+                bluetoothNodeProtocol.connect(bluetoothDevice, sdCardErrors -> System.err.println("SDCard Error " + sdCardErrors));
+            }
         });
         mViewModel.getNode().observe(getViewLifecycleOwner(), node -> {
             binding.nodeNameNodePage.setText(node.getNodeName());
@@ -104,46 +111,54 @@ public class NodeDetailsFragment extends Fragment {
             Snackbar.make(binding.nodePageId, "Bluetooth Not Supported", Snackbar.LENGTH_LONG).show();
             return binding.getRoot();
         }
-        // todo check if bluetooth is turned off
-//        if (!bluetoothAdapter.isEnabled()) {
-//            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-//            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-//        } else {
-//        }
 
-        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
-        Optional<BluetoothDevice> bluetoothDeviceOptional = pairedDevices.stream().filter(device -> device.getName().equals(nodeModel.connectedBluetoothDevice))
-                .findFirst();
-        if (!bluetoothDeviceOptional.isPresent()) {
-            Snackbar.make(binding.idRVSensor, "Bluetooth Device not found", Snackbar.LENGTH_LONG).show();
-            return binding.getRoot();
+        if (!bluetoothAdapter.isEnabled()) {
+            bluetoothAdapter.enable();
+
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            activityForResultLauncher.launch(enableBtIntent, result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    System.out.println("BT Enabled");
+
+                    connectToNode(nodeModel, bluetoothAdapter);
+                }
+            });
+        } else {
+            if (!connectToNode(nodeModel, bluetoothAdapter)) {
+                return binding.getRoot();
+            }
         }
-        mViewModel.setBluetoothDevice(bluetoothDeviceOptional.get());
-
-
-        bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> {
-            Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_SHORT)
-                    .show();
-        });
 
         binding.liveDataButton.setOnClickListener(view -> {
+            if (bluetoothNodeProtocol == null) {
+                Snackbar.make(binding.idRVSensor, "Not connected to node", Snackbar.LENGTH_SHORT)
+                        .show();
+                return;
+            }
             if (cyclicRunner != null) {
-                binding.liveDataButton.setText("Live Data");
+                binding.liveDataButton.setText(R.string.live_data);
                 stopLiveDataRead();
             } else {
-                binding.liveDataButton.setText("Stop");
+                binding.liveDataButton.setText(R.string.stop);
                 startLiveDataRead();
             }
         });
 
-        binding.logDataButton.setOnClickListener(view -> bluetoothNodeProtocol.readSensorCount(count -> {
-            bluetoothNodeProtocol.readSensorTypes(count, sensorTypes -> {
-                mViewModel.setSensors(sensorTypes);
+        binding.readNodeButton.setOnClickListener(view -> {
+            if (bluetoothNodeProtocol == null) {
+                Snackbar.make(binding.idRVSensor, "Node not connected! Trying to connect...", Snackbar.LENGTH_SHORT).show();
+                connectToNode(nodeModel, bluetoothAdapter);
+                return;
+            }
+            bluetoothNodeProtocol.readSensorCount(count -> {
+                bluetoothNodeProtocol.readSensorTypes(count, sensorTypes -> {
+                    mViewModel.setSensors(sensorTypes);
 
-                nodeModel.setSensors(Arrays.stream(sensorTypes).map(SensorModel::new).collect(Collectors.toList()));
-                nodeService.updateNode(nodeModel).subscribe(System.out::println);
+                    nodeModel.setSensors(Arrays.stream(sensorTypes).map(SensorModel::new).collect(Collectors.toList()));
+                    nodeService.updateNode(nodeModel).subscribe(System.out::println);
+                });
             });
-        }));
+        });
         return binding.getRoot();
     }
 
@@ -160,13 +175,40 @@ public class NodeDetailsFragment extends Fragment {
 
     private void startLiveDataRead() {
         cyclicRunner = new CyclicRunner(1000);
-        cyclicRunner.run(() ->
-                bluetoothNodeProtocol.readLiveData(sensorLogData -> {
-                    Node node = mViewModel.getNode().getValue();
-                    if (node != null) {
-                        node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
-                    }
-                }));
+        cyclicRunner.run(() -> {
+            if (bluetoothNodeProtocol == null) {
+                return;
+            }
+            bluetoothNodeProtocol.readLiveData(sensorLogData -> {
+                Node node = mViewModel.getNode().getValue();
+                if (node != null) {
+                    node.updateSensorValue(sensorLogData.sensorType, sensorLogData.value);
+                }
+            });
+        });
+    }
+
+    private boolean connectToNode(NodeModel nodeModel, BluetoothAdapter bluetoothAdapter) {
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        Optional<BluetoothDevice> bluetoothDeviceOptional = pairedDevices.stream().filter(device -> device.getName().equals(nodeModel.connectedBluetoothDevice))
+                .findFirst();
+        if (!bluetoothDeviceOptional.isPresent()) {
+            Snackbar.make(binding.idRVSensor, "Bluetooth Device not found", Snackbar.LENGTH_LONG).show();
+            return false;
+        }
+        mViewModel.setBluetoothDevice(bluetoothDeviceOptional.get());
+
+        bluetoothNodeProtocol = new BluetoothNodeProtocolSPPImpl(deviceName -> {
+            if (deviceName == null) {
+                Snackbar.make(binding.idRVSensor, "Couldn't connect to " + nodeModel.connectedBluetoothDevice, Snackbar.LENGTH_SHORT)
+                        .show();
+                bluetoothNodeProtocol = null;
+            } else {
+                Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_SHORT)
+                        .show();
+            }
+        });
+        return true;
     }
 
     private void stopLiveDataRead() {

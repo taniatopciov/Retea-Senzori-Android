@@ -47,5 +47,6 @@
     <string name="bluetooth_device_name">BlueTooth Device Name</string>
     <string name="time">Time</string>
     <string name="value">Value</string>
+    <string name="stop">Stop</string>
 
 </resources>
