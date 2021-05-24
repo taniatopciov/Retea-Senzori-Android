@@ -5,9 +5,4 @@ public class IdentityMapper implements SensorValueMapper {
     public float format(float value) {
         return value;
     }
-
-    @Override
-    public int format(int value) {
-        return value;
-    }
 }

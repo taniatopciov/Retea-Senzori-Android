@@ -2,6 +2,7 @@ package com.example.retea_senzori_android.nodes.factory;
 
 import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.observables.Subject;
+import com.example.retea_senzori_android.sensor.SensorType;
 
 public class Sensor extends Subject<Float> {
     private final SensorModel sensorModel;
@@ -12,15 +13,20 @@ public class Sensor extends Subject<Float> {
         this.sensorValueMapper = sensorValueMapper;
     }
 
-    public float formatValue(float value) {
-        return sensorValueMapper.format(value);
-    }
-
-    public int formatValue(int value) {
-        return sensorValueMapper.format(value);
+    @Override
+    public void setState(Float state) {
+        super.setState(sensorValueMapper.format(state));
     }
 
     public SensorModel getSensorModel() {
         return sensorModel;
+    }
+
+    public SensorValueMapper getSensorValueMapper() {
+        return sensorValueMapper;
+    }
+
+    public SensorType getSensorType() {
+        return sensorModel.sensorType;
     }
 }

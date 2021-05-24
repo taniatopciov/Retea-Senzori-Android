@@ -1,9 +1,11 @@
 package com.example.retea_senzori_android.nodes.factory;
 
+import com.example.retea_senzori_android.models.NodeModel;
 import com.example.retea_senzori_android.sensor.SensorType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Node {
     private final String connectedBluetoothDevice;
@@ -51,7 +53,7 @@ public class Node {
     public void updateSensorValue(SensorType sensorType, float value) {
         for (int i = 0; i < sensors.size(); i++) {
             Sensor sensor = sensors.get(i);
-            if (sensor.getSensorModel().sensorType.equals(sensorType)) {
+            if (sensor.getSensorType().equals(sensorType)) {
                 sensor.setState(value);
                 return;
             }
@@ -67,5 +69,15 @@ public class Node {
         for (SensorType sensorType : sensorTypes) {
             addSensor(SensorFactory.fromType(sensorType));
         }
+    }
+
+    public NodeModel getNodeModel() {
+        NodeModel nodeModel = new NodeModel();
+        nodeModel.connectedBluetoothDevice = connectedBluetoothDevice;
+        nodeModel.nodeName = nodeName;
+        nodeModel.lastUpdate = lastUpdate;
+        nodeModel.sensors = sensors.stream().map(Sensor::getSensorModel).collect(Collectors.toList());
+
+        return nodeModel;
     }
 }

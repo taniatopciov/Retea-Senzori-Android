@@ -2,6 +2,7 @@ package com.example.retea_senzori_android.bluetooth.protocol;
 
 import android.bluetooth.BluetoothDevice;
 
+import com.example.retea_senzori_android.observables.Subject;
 import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.sensor.SensorType;
 
@@ -19,7 +20,7 @@ public interface BluetoothNodeProtocol {
 
     void readLiveData(Consumer<SensorLogData> onLiveDataRead);
 
-    void readCurrentLogData(Consumer<SensorDataLogFile> onCurrentLogRead);
+    Subject<SensorDataLogFile> readCurrentLogData();
 
     void readAllLogData(Consumer<List<SensorDataLogFile>> onCurrentLogRead);
 

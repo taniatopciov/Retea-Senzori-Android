@@ -18,10 +18,15 @@ import com.example.retea_senzori_android.databinding.NodeDetailsFragmentBinding;
 import com.example.retea_senzori_android.di.Injectable;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.NodeModel;
+import com.example.retea_senzori_android.models.SensorLogFile;
 import com.example.retea_senzori_android.models.SensorModel;
 import com.example.retea_senzori_android.nodes.factory.Node;
 import com.example.retea_senzori_android.nodes.factory.NodeFactory;
+import com.example.retea_senzori_android.nodes.factory.NodeLogCreator;
+import com.example.retea_senzori_android.nodes.factory.Sensor;
 import com.example.retea_senzori_android.nodes.renameNodePopup.RenameNodeDialogFragment;
+import com.example.retea_senzori_android.sensor.SensorLogData;
+import com.example.retea_senzori_android.services.logs.LogsService;
 import com.example.retea_senzori_android.services.nodes.NodeService;
 import com.example.retea_senzori_android.utils.activity.ActivityForResultLauncher;
 import com.example.retea_senzori_android.utils.runners.CyclicRunner;
@@ -31,13 +36,14 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 public class NodeDetailsFragment extends Fragment {
@@ -50,6 +56,9 @@ public class NodeDetailsFragment extends Fragment {
 
     @Injectable
     private ActivityForResultLauncher activityForResultLauncher;
+
+    @Injectable
+    private LogsService logsService;
 
     private static final int RENAME_NODE_DIALOG_REQUEST_CODE = 100;
 
@@ -106,7 +115,37 @@ public class NodeDetailsFragment extends Fragment {
         });
 
         binding.allDataButton.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
+            if (bluetoothNodeProtocol != null) {
+                bluetoothNodeProtocol.readAllLogData(sensorDataLogFiles -> {
+                    Node node = mViewModel.getNode().getValue();
+                    if (node == null) {
+                        return;
+                    }
+
+                    NodeLogCreator nodeLogCreator = new NodeLogCreator(node.getSensors());
+
+                    for (int i = 0; i < sensorDataLogFiles.size(); i++) {
+                        nodeLogCreator.startLog();
+                        for (int j = 0; j < sensorDataLogFiles.get(i).getLogData().size(); j++) {
+                            SensorLogData sensorLogData = sensorDataLogFiles.get(i).getLogData().get(j);
+                            nodeLogCreator.addSensorLogData(sensorLogData);
+                        }
+                        nodeLogCreator.endLog();
+                    }
+
+                    SensorLogFile sensorLogFile = nodeLogCreator.getSensorLogFile();
+                    for (int i = 0; i < node.getSensors().size(); i++) {
+                        Sensor sensor = node.getSensors().get(i);
+                        logsService.addLog(sensor.getSensorModel(), sensorLogFile).subscribe(value -> {
+                            sensor.getSensorModel().logFileId = value.logFileId;
+
+                            nodeService.updateNode(node.getNodeModel());
+                        });
+                    }
+
+                });
+            }
+//            Navigation.findNavController(view).navigate(NodeDetailsFragmentDirections.navigateToAllData(nodeModel));
         });
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -156,9 +195,17 @@ public class NodeDetailsFragment extends Fragment {
             bluetoothNodeProtocol.readSensorCount(count -> {
                 bluetoothNodeProtocol.readSensorTypes(count, sensorTypes -> {
                     mViewModel.setSensors(sensorTypes);
-
                     nodeModel.setSensors(Arrays.stream(sensorTypes).map(SensorModel::new).collect(Collectors.toList()));
                     nodeService.updateNode(nodeModel).subscribe(System.out::println);
+
+                    bluetoothNodeProtocol.readCurrentLogData().subscribe(sensorDataLogFile -> {
+                        for (int i = 0; i < sensorDataLogFile.getLogData().size(); i++) {
+                            SensorLogData sensorLogData = sensorDataLogFile.getLogData().get(i);
+                            System.out.println(sensorLogData);
+                        }
+
+                        bluetoothNodeProtocol.setUnixTime();
+                    });
                 });
             });
         });
@@ -209,6 +256,15 @@ public class NodeDetailsFragment extends Fragment {
             } else {
                 Snackbar.make(binding.idRVSensor, "Connected to " + deviceName, Snackbar.LENGTH_SHORT)
                         .show();
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        if (bluetoothNodeProtocol != null) {
+                            bluetoothNodeProtocol.setUnixTime();
+                        }
+                    }
+                }, 500);
             }
         });
         return true;

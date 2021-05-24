@@ -3,6 +3,7 @@ package com.example.retea_senzori_android.bluetooth.protocol;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
+import com.example.retea_senzori_android.observables.Subject;
 import com.example.retea_senzori_android.sensor.NoArgConsumer;
 import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.sensor.SensorType;
@@ -233,14 +234,21 @@ public class BluetoothNodeProtocolSPPImpl implements BluetoothNodeProtocol {
     }
 
     @Override
-    public void readCurrentLogData(Consumer<SensorDataLogFile> onCurrentLogRead) {
+    public Subject<SensorDataLogFile> readCurrentLogData() {
+        Subject<SensorDataLogFile> subject = new Subject<>();
+
         sendCommand(REPLAY_DATA_FROM_CURRENT_LOG_STRING);
 
         final SensorDataLogFile sensorDataLogFile = new SensorDataLogFile();
         onLogFileOpen = sensorDataLogFile::openLogFile;
-        onLogFileClosed = sensorDataLogFile::closeLogFile;
+        onLogFileClosed = () -> {
+            sensorDataLogFile.closeLogFile();
+            subject.setState(sensorDataLogFile);
+        };
 
         onDataRead = sensorDataLogFile::addSensorLogData;
+
+        return subject;
     }
 
     @Override

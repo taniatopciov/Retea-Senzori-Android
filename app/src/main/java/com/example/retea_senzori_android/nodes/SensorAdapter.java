@@ -35,7 +35,7 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.Viewholder
     @Override
     public void onBindViewHolder(@NonNull SensorAdapter.Viewholder holder, int position) {
         Sensor model = sensorArrayList.get(position);
-        holder.sensorName.setText(model.getSensorModel().sensorType.toString());
+        holder.sensorName.setText(model.getSensorType().toString());
         holder.itemView.setOnClickListener(v -> Navigation.findNavController(v).navigate(NodeDetailsFragmentDirections.navigateToSensorFragment(model.getSensorModel())));
         model.subscribe(value ->
                 uiRunner.run(() ->
