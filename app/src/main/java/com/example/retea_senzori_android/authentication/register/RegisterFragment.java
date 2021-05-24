@@ -1,16 +1,9 @@
 package com.example.retea_senzori_android.authentication.register;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import com.example.retea_senzori_android.authentication.service.AuthenticationService;
 import com.example.retea_senzori_android.databinding.FragmentRegisterBinding;
@@ -20,6 +13,11 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 public class RegisterFragment extends Fragment {
 
@@ -57,7 +55,7 @@ public class RegisterFragment extends Fragment {
                 return;
             }
 
-            if(!password.equals(confirmPassword)) {
+            if (!password.equals(confirmPassword)) {
                 Snackbar.make(view, "Passwords do not match", Snackbar.LENGTH_SHORT)
                         .show();
                 return;
@@ -69,9 +67,14 @@ public class RegisterFragment extends Fragment {
                 return;
             }
 
+            boolean[] called = {false};
+
             authenticationService.register(email, password, username).subscribe(errorMessage -> {
                 if (errorMessage == null) {
-                    Navigation.findNavController(view).navigate(RegisterFragmentDirections.navigateToHomePage());
+                    if (!called[0]) {
+                        called[0] = true;
+                        Navigation.findNavController(view).navigate(RegisterFragmentDirections.navigateToHomePage());
+                    }
                 } else {
                     Snackbar.make(view, errorMessage, Snackbar.LENGTH_SHORT)
                             .show();
