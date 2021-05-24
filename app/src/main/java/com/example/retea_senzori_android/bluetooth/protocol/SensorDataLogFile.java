@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SensorDataLogFile {
-    private final List<SensorLogData> logData = new ArrayList<>();
+    private List<SensorLogData> logData = new ArrayList<>();
 
     public void openLogFile() {
 
@@ -22,5 +22,9 @@ public class SensorDataLogFile {
 
     public List<SensorLogData> getLogData() {
         return logData;
+    }
+
+    public void setLogData(List<SensorLogData> logData) {
+        this.logData = logData;
     }
 }
