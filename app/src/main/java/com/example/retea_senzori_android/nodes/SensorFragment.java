@@ -15,6 +15,7 @@ import com.example.retea_senzori_android.databinding.SensorFragmentBinding;
 import com.example.retea_senzori_android.di.Injectable;
 import com.example.retea_senzori_android.di.ServiceLocator;
 import com.example.retea_senzori_android.models.SensorModel;
+import com.example.retea_senzori_android.sensor.SensorLogData;
 import com.example.retea_senzori_android.services.logs.LogsService;
 
 import androidx.annotation.NonNull;
@@ -54,7 +55,11 @@ public class SensorFragment extends Fragment {
                 return;
             }
             sensorLogFile.sensorLogs.forEach((sensorData) -> {
-                sensorData.getLogData().forEach((data) -> {
+                for (SensorLogData data : sensorData.getLogData()) {
+                    if (!data.sensorType.equals(sensorModel.sensorType)) {
+                        continue;
+                    }
+
                     TableRow tr = new TableRow(getContext());
                     TextView text1 = new TextView(getContext());
                     TextView text2 = new TextView(getContext());
@@ -67,7 +72,7 @@ public class SensorFragment extends Fragment {
                     tr.addView(text1);
                     tr.addView(text2);
                     binding.logsTable.addView(tr);
-                });
+                }
             });
         });
         mViewModel.setSensorType(sensorModel.sensorType);
