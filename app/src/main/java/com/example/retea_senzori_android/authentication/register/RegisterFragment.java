@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.retea_senzori_android.R;
 import com.example.retea_senzori_android.authentication.service.AuthenticationService;
 import com.example.retea_senzori_android.databinding.FragmentRegisterBinding;
 import com.example.retea_senzori_android.di.Injectable;
@@ -17,7 +18,9 @@ import java.util.regex.Pattern;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 public class RegisterFragment extends Fragment {
 
@@ -42,6 +45,10 @@ public class RegisterFragment extends Fragment {
         binding.goToLogin.setOnClickListener(view -> {
             Navigation.findNavController(view).navigate(RegisterFragmentDirections.navigateToLogin());
         });
+
+        NavHostFragment navHostFragment = (NavHostFragment) requireActivity().getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
 
         binding.registerButton.setOnClickListener(view -> {
             String email = binding.emailRegister.getText().toString();
@@ -73,7 +80,7 @@ public class RegisterFragment extends Fragment {
                 if (errorMessage == null) {
                     if (!called[0]) {
                         called[0] = true;
-                        Navigation.findNavController(view).navigate(RegisterFragmentDirections.navigateToHomePage());
+                        navController.navigate(RegisterFragmentDirections.navigateToHomePage());
                     }
                 } else {
                     Snackbar.make(view, errorMessage, Snackbar.LENGTH_SHORT)
